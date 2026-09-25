@@ -279,18 +279,38 @@ h2{font:600 clamp(22px,4vw,28px)/1.2 "IBM Plex Mono",monospace;letter-spacing:-.
 .filter-pill{position:absolute;top:4px;left:0;height:calc(100% - 8px);width:0;border-radius:9px;background:var(--surface);box-shadow:var(--shadow);transition:transform .4s var(--ease-out),width .4s var(--ease-out)}
 .equip{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
 .gear{
-  display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 14px;font-size:13.5px;box-shadow:var(--shadow);
-  transition:opacity .25s ease,transform .25s var(--ease-out);
+  display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:0 12px 0 0;font-size:13.5px;box-shadow:var(--shadow);
+  transition:opacity .25s ease,transform .25s var(--ease-out),background-color .25s ease,border-color .25s ease;
 }
 .gear[hidden]{display:none!important}
-.gear .dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;background:var(--accent)}
-.gear[data-status="incoming"] .dot{background:var(--amber);animation:blink 2.4s ease-in-out infinite}
-.gear[data-status="need"] .dot{background:transparent;border:1.75px solid var(--text-muted)}
-@keyframes blink{50%{opacity:.35}}
+.gear .have{display:flex;align-items:center;gap:12px;flex:1;min-width:0;border:0;background:none;padding:12px 0 12px 14px;text-align:left;cursor:pointer;font:inherit;color:inherit;-webkit-tap-highlight-color:transparent;transition:transform .16s var(--ease-out)}
+.gear .have:active{transform:scale(.98)}
+.gear .dot{width:18px;height:18px;border-radius:6px;flex-shrink:0;border:1.75px solid var(--border-strong);display:grid;place-items:center;transition:background-color .2s ease,border-color .2s ease}
+.gear .dot svg{width:12px;height:12px}
+.gear .dot path{fill:none;stroke:var(--accent-ink);stroke-width:2.8;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:18;stroke-dashoffset:18;transition:stroke-dashoffset .28s var(--ease-out) .04s}
+.gear.has{background:var(--done-bg);border-color:color-mix(in srgb,var(--accent) 40%,var(--border))}
+.gear.has .dot{background:var(--accent);border-color:var(--accent)}
+.gear.has .dot path{stroke-dashoffset:0}
 .gear .name{flex:1;min-width:0;line-height:1.35}
 .gear .tag{font:500 10px "IBM Plex Mono",monospace;letter-spacing:.05em;text-transform:uppercase;color:var(--text-muted);white-space:nowrap}
-.gear[data-status="incoming"] .tag{color:var(--amber)}
-.gear[data-status="owned"] .tag{color:var(--accent)}
+.gear .find{font:500 11px "IBM Plex Mono",monospace;color:var(--accent);text-decoration:none;padding:4px 8px;border-radius:7px;background:var(--accent-soft);white-space:nowrap}
+.gear.has .find{display:none}
+
+/* ---------- Start here ---------- */
+.cta-row{display:flex;flex-wrap:wrap;gap:10px;margin:-8px 0 28px}
+.cta{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:11px;border:1px solid var(--border);background:var(--surface);text-decoration:none;font:500 13px "IBM Plex Mono",monospace;transition:transform .16s var(--ease-out),filter .2s ease}
+.cta svg{width:14px;height:14px}
+.cta.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.cta:active{transform:scale(.97)}
+@media (hover:hover) and (pointer:fine){.cta:hover{filter:brightness(1.06)}}
+.how{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+@media (max-width:720px){.how{grid-template-columns:1fr}}
+.how-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px;box-shadow:var(--shadow)}
+.how-card h4{margin:10px 0 4px;font-size:15px}
+.how-card p{margin:0;color:var(--text-muted);font-size:13.5px;line-height:1.55}
+.how-n{display:grid;place-items:center;width:26px;height:26px;border-radius:8px;background:var(--accent-soft);color:var(--accent);font:600 12px "IBM Plex Mono",monospace}
+.subs h5{font:500 11.5px "IBM Plex Mono",monospace;letter-spacing:.05em;text-transform:uppercase;color:var(--text-muted);margin:18px 0 6px}
+.subs .mini-table td{font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:13px}
 
 /* ---------- Diagram ---------- */
 .diagram-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:18px;margin:0 0 26px;box-shadow:var(--shadow);overflow:hidden}
@@ -354,7 +374,7 @@ footer{margin-top:64px;padding-top:22px;border-top:1px solid var(--border);displ
 .hold.holding .fillr{clip-path:inset(0 0 0 0);transition:clip-path 1.4s linear}
 
 /* reveal must win over component transitions (keeps stagger delay + long ease) */
-.item.reveal,.gear.reveal,.stat.reveal,.diagram-card.reveal{
+.item.reveal,.gear.reveal,.stat.reveal,.diagram-card.reveal,.how-card.reveal{
   transition:opacity .7s var(--ease-out),transform .7s var(--ease-out),background-color .3s ease,border-color .3s ease;
   transition-delay:calc(var(--i,0) * 55ms);
 }
@@ -374,7 +394,7 @@ footer{margin-top:64px;padding-top:22px;border-top:1px solid var(--border);displ
 /* ---------- Reduced motion / transparency ---------- */
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
-  .ambient .blob,.live-dot::after,.gear[data-status="incoming"] .dot{animation:none}
+  .ambient .blob,.live-dot::after{animation:none}
   h1 .w{animation:fade .3s ease forwards;transform:none;filter:none}
   .reveal{transform:none;transition:opacity .3s ease}
   .flow.live{animation:none;stroke-dasharray:none}
@@ -399,7 +419,8 @@ footer{margin-top:64px;padding-top:22px;border-top:1px solid var(--border);displ
     </div>
     <nav class="tabs" id="tabs" aria-label="Sections">
       <span class="tab-indicator" id="tab-indicator"></span>
-      <button class="tab" data-target="now">Now</button>
+      <button class="tab" data-target="start">Start</button>
+      <button class="tab" data-target="now">Plan</button>
       <button class="tab" data-target="gear">Gear</button>
       <button class="tab" data-target="phase-1">01 Arduino</button>
       <button class="tab" data-target="phase-2">02 ToF</button>
@@ -415,23 +436,52 @@ footer{margin-top:64px;padding-top:22px;border-top:1px solid var(--border);displ
 <main class="wrap">
 
   <section class="hero">
-    <p class="eyebrow"><span class="live-dot"></span>Hardware / Portfolio Build · 4 boards in transit</p>
+    <p class="eyebrow"><span class="live-dot"></span>Open build · follow along</p>
     <h1 aria-label="Axiom Build Roadmap"><span class="w" style="--i:0">Axiom</span> <span class="w" style="--i:1">Build</span> <span class="w accent" style="--i:2">Roadmap</span></h1>
-    <p class="sub reveal" style="--i:3">Three phases, in order: learn the fundamentals on cheap hardware, run a real ST sensor evaluation, then build the Axiom claw. Check items off as you go. Your progress is saved on this device.</p>
+    <p class="sub reveal" style="--i:3">A step-by-step roadmap for building Axiom: a presence-aware AI voice assistant with a robotic claw. I'm building it in public. Follow the same steps, check items off as you go, and your progress saves in your own browser.</p>
+    <div class="cta-row reveal" style="--i:3">
+      <a class="cta primary" href="#start">Start here<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 2l4 4-4 4"/></svg></a>
+      <a class="cta" href="https://github.com/RobertMartinez19/AxiomBuildRoadmap" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>View on GitHub</a>
+    </div>
     <div class="stats">
       <div class="stat green reveal" style="--i:4"><div class="k">Complete</div><div class="v"><span id="stat-pct">0</span><small>%</small></div><div class="bar"><i id="stat-bar"></i></div></div>
       <div class="stat reveal" style="--i:5"><div class="k">Tasks done</div><div class="v"><span id="stat-done">0</span><small> / <span id="stat-total">0</span></small></div></div>
-      <div class="stat reveal" style="--i:6"><div class="k">Current phase</div><div class="v" id="stat-phase">Now</div></div>
-      <div class="stat amber reveal" style="--i:7"><div class="k">Boards shipping</div><div class="v">4</div></div>
+      <div class="stat reveal" style="--i:6"><div class="k">Current phase</div><div class="v" id="stat-phase">Plan</div></div>
+      <div class="stat amber reveal" style="--i:7"><div class="k">Parts on hand</div><div class="v"><span id="stat-gear">0</span><small> / <span id="stat-gear-total">0</span></small></div></div>
+    </div>
+  </section>
+
+  <!-- START HERE -->
+  <section class="section" id="start">
+    <div class="reveal">
+      <p class="phase-kicker"><span class="phase-num"><span class="n">★</span></span>Start here</p>
+      <h2>How to follow along</h2>
+      <p class="desc">You don't need the exact parts I'm using. The architecture is the point: a sensor notices you, a small chip listens for a wake word, a computer does the thinking, and a microcontroller moves the claw. Swap parts freely.</p>
+    </div>
+    <div class="how">
+      <div class="how-card reveal"><span class="how-n">1</span><h4>Mark your gear</h4><p>Tap everything you already own in the Gear list. It shows what's left to buy and where to find it.</p></div>
+      <div class="how-card reveal"><span class="how-n">2</span><h4>Start Phase 1 today</h4><p>Any Arduino Uno starter kit covers it. Order the ST boards while you work through it; they can take a week or more to arrive.</p></div>
+      <div class="how-card reveal"><span class="how-n">3</span><h4>Check things off</h4><p>Progress, gear, and your test results save in this browser only. Nothing is uploaded, and nobody else sees your checks.</p></div>
+    </div>
+    <div class="subs reveal">
+      <h5>Common substitutions</h5>
+      <div class="table-scroll"><table class="mini-table">
+        <tr><th>Role</th><th>In this build</th><th>Also works</th></tr>
+        <tr><td>Presence sensor</td><td>VL53L8 multizone ToF</td><td>A cheaper single-zone ToF breakout (e.g. VL53L1X)</td></tr>
+        <tr><td>Wake word ("ears")</td><td>STM32N6 Nucleo</td><td>Run the wake word on your computer instead (e.g. openWakeWord) and skip Stage 4</td></tr>
+        <tr><td>Brain</td><td>Computer + Claude API</td><td>Any Mac, PC, or Linux box that runs Python</td></tr>
+        <tr><td>Hands</td><td>Arduino Uno + SG90 servos</td><td>Any Arduino-compatible board with PWM pins</td></tr>
+        <tr><td>Mouth</td><td>Salvaged Echo driver + PAM8403</td><td>Any small 4–8Ω speaker on the same amp</td></tr>
+      </table></div>
     </div>
   </section>
 
   <!-- NOW -->
   <section class="section phase" id="now" data-phase="now">
     <div class="reveal">
-      <p class="phase-kicker"><span class="phase-num"><span class="n">→</span><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span>While the boards ship</p>
-      <h2>Paper work that becomes proof <span class="badge">No hardware needed</span></h2>
-      <p class="desc">Everything from Will is still in transit. Use the wait to write the FAE-style work product now, then validate it with real measurements the day the boards land.</p>
+      <p class="phase-kicker"><span class="phase-num"><span class="n">→</span><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span>Before the hardware arrives</p>
+      <h2>Plan before you build <span class="badge">No hardware needed</span></h2>
+      <p class="desc">Use the shipping wait. Get the software brain running, research the parts, and set up the toolchain, so bring-up day is about testing instead of reading datasheets for the first time.</p>
       <div class="phase-meter"><span class="pm-count">0/3</span><div class="bar"><i></i></div></div>
     </div>
     <div class="track">
@@ -439,10 +489,29 @@ footer{margin-top:64px;padding-top:22px;border-top:1px solid var(--border);displ
 
       <article class="item reveal" data-track>
         <div class="item-head">
+          <label class="check"><input type="checkbox" data-id="now-brain" aria-label="Mark complete"><span class="box"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span></label>
+          <div class="item-body">
+            <h4 class="item-title">Get the software brain running</h4>
+            <p class="item-note">A Python voice loop on your computer: microphone → speech-to-text → Claude API → text-to-speech. Trigger it with a keypress for now. Everything in Phase 3 plugs into this.</p>
+            <button class="steps-toggle" aria-expanded="false">Steps <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 2l4 4-4 4"/></svg></button>
+            <div class="steps"><div class="steps-inner"><div class="steps-content">
+              <ol>
+                <li>Get an Anthropic API key and keep it in a <code>.env</code> file that is listed in <code>.gitignore</code>. Never commit it.</li>
+                <li>Record a few seconds of audio, transcribe it, send the text to Claude, and print the reply. Get this working as plain text first.</li>
+                <li>Add text-to-speech so the reply is spoken out loud.</li>
+                <li>Wrap it in a loop that starts on a keypress. In Stage 5 the keypress gets replaced by the "WAKE" message from the N6 board.</li>
+              </ol>
+            </div></div></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="item reveal" data-track>
+        <div class="item-head">
           <label class="check"><input type="checkbox" data-id="now-matrix" aria-label="Mark complete"><span class="box"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span></label>
           <div class="item-body">
             <h4 class="item-title">ToF sensor selection matrix</h4>
-            <p class="item-note">Anchor on the VL53L8 you're getting and compare it against ST's lower-cost single-zone VL53L1X and one competitor's multizone ToF sensor. The question to answer: is 8×8 multizone overkill for presence-wake, or does it earn its cost?</p>
+            <p class="item-note">Anchor on the VL53L8 used in this build and compare it against ST's lower-cost single-zone VL53L1X and one competitor's multizone ToF sensor. The question to answer: is 8×8 multizone overkill for presence-wake, or does it earn its cost?</p>
             <button class="steps-toggle" aria-expanded="false">Columns to fill <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 2l4 4-4 4"/></svg></button>
             <div class="steps"><div class="steps-inner"><div class="steps-content">
               <ol>
@@ -461,7 +530,7 @@ footer{margin-top:64px;padding-top:22px;border-top:1px solid var(--border);displ
         <div class="item-head">
           <label class="check"><input type="checkbox" data-id="now-appnote" aria-label="Mark complete"><span class="box"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span></label>
           <div class="item-body">
-            <h4 class="item-title">Draft the app note: presence-gated wake word</h4>
+            <h4 class="item-title">Draft the app note: presence-gated wake word <span class="badge">Optional</span></h4>
             <p class="item-note">"VL53L8 + STM32N6." Write the architecture, power states, I²C setup, and detection thresholds now. Leave blanks for the measured numbers (range, false-trigger rate, standby current) and fill them in during Phase 2.</p>
           </div>
         </div>
@@ -483,27 +552,28 @@ footer{margin-top:64px;padding-top:22px;border-top:1px solid var(--border);displ
   <section class="section" id="gear">
     <div class="reveal">
       <p class="phase-kicker"><span class="phase-num"><span class="n">00</span></span>Equipment</p>
-      <h2>What you're working with</h2>
+      <h2>What you'll need</h2>
     </div>
+    <p class="hint reveal" style="margin:-4px 0 14px">Tap what you already have. It's saved in your browser.</p>
     <div class="filters reveal" id="filters" role="group" aria-label="Filter equipment">
       <span class="filter-pill" id="filter-pill"></span>
       <button class="filter" data-f="all" aria-pressed="true">All</button>
-      <button class="filter" data-f="owned" aria-pressed="false">Owned</button>
-      <button class="filter" data-f="incoming" aria-pressed="false">In transit</button>
-      <button class="filter" data-f="need" aria-pressed="false">To get</button>
+      <button class="filter" data-f="have" aria-pressed="false">Have</button>
+      <button class="filter" data-f="need" aria-pressed="false">Need</button>
     </div>
     <div class="equip" id="equip">
-      <div class="gear reveal" data-status="owned"><span class="dot"></span><span class="name">ELEGOO Uno R3</span><span class="tag">Owned</span></div>
-      <div class="gear reveal" data-status="owned"><span class="dot"></span><span class="name">Smraza 298pc kit</span><span class="tag">Owned</span></div>
-      <div class="gear reveal" data-status="owned"><span class="dot"></span><span class="name">SG90 servo 4-pack</span><span class="tag">Owned</span></div>
-      <div class="gear reveal" data-status="owned"><span class="dot"></span><span class="name">TRMS multimeter</span><span class="tag">Owned</span></div>
-      <div class="gear reveal" data-status="owned"><span class="dot"></span><span class="name">Tripod / mount</span><span class="tag">Owned</span></div>
-      <div class="gear reveal" data-status="owned"><span class="dot"></span><span class="name">3rd-gen Echo (gut target)</span><span class="tag">Owned</span></div>
-      <div class="gear reveal" data-status="incoming"><span class="dot"></span><span class="name">P-NUCLEO-53L8A1 + SATEL-VL53L8 (ToF)</span><span class="tag">In transit</span></div>
-      <div class="gear reveal" data-status="incoming"><span class="dot"></span><span class="name">P-NUCLEO-IHM03 (motor control)</span><span class="tag">In transit</span></div>
-      <div class="gear reveal" data-status="incoming"><span class="dot"></span><span class="name">NUCLEO-N657X0-Q (STM32N6 AI)</span><span class="tag">In transit</span></div>
-      <div class="gear reveal" data-status="need"><span class="dot"></span><span class="name">PAM8403 mini amp board</span><span class="tag">Need to buy</span></div>
-      <div class="gear reveal" data-status="need"><span class="dot"></span><span class="name">Claw mechanism + base</span><span class="tag">Print or buy?</span></div>
+      <div class="gear reveal" data-g="uno"><button class="have" aria-pressed="false"><span class="dot"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span><span class="name">Arduino Uno R3 (or clone)</span></button><span class="tag">P1</span></div>
+      <div class="gear reveal" data-g="kit"><button class="have" aria-pressed="false"><span class="dot"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span><span class="name">Starter kit: breadboard, LEDs, buzzer, potentiometer, jumpers</span></button><span class="tag">P1</span></div>
+      <div class="gear reveal" data-g="servo"><button class="have" aria-pressed="false"><span class="dot"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span><span class="name">SG90 micro servos (2+)</span></button><span class="tag">P1</span></div>
+      <div class="gear reveal" data-g="meter"><button class="have" aria-pressed="false"><span class="dot"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span><span class="name">Multimeter</span></button><span class="tag">P1</span></div>
+      <div class="gear reveal" data-g="tof"><button class="have" aria-pressed="false"><span class="dot"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span><span class="name">P-NUCLEO-53L8A1 (ToF sensor kit)</span></button><span class="tag">P2</span><a class="find" href="https://www.digikey.com/en/products/result?keywords=P-NUCLEO-53L8A1" target="_blank" rel="noopener">Find</a></div>
+      <div class="gear reveal" data-g="satel"><button class="have" aria-pressed="false"><span class="dot"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span><span class="name">SATEL-VL53L8 (second sensor, optional)</span></button><span class="tag">P2</span><a class="find" href="https://www.digikey.com/en/products/result?keywords=SATEL-VL53L8" target="_blank" rel="noopener">Find</a></div>
+      <div class="gear reveal" data-g="n6"><button class="have" aria-pressed="false"><span class="dot"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span><span class="name">NUCLEO-N657X0-Q (STM32N6 AI board)</span></button><span class="tag">P3</span><a class="find" href="https://www.digikey.com/en/products/result?keywords=NUCLEO-N657X0-Q" target="_blank" rel="noopener">Find</a></div>
+      <div class="gear reveal" data-g="ihm"><button class="have" aria-pressed="false"><span class="dot"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span><span class="name">P-NUCLEO-IHM03 (motor control, optional)</span></button><span class="tag">P3</span><a class="find" href="https://www.digikey.com/en/products/result?keywords=P-NUCLEO-IHM03" target="_blank" rel="noopener">Find</a></div>
+      <div class="gear reveal" data-g="amp"><button class="have" aria-pressed="false"><span class="dot"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span><span class="name">PAM8403 mini amp board</span></button><span class="tag">P3</span></div>
+      <div class="gear reveal" data-g="spk"><button class="have" aria-pressed="false"><span class="dot"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span><span class="name">Small speaker (Echo driver or any 4–8Ω)</span></button><span class="tag">P3</span></div>
+      <div class="gear reveal" data-g="claw"><button class="have" aria-pressed="false"><span class="dot"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span><span class="name">Claw mechanism + base (3D print or kit)</span></button><span class="tag">P3</span></div>
+      <div class="gear reveal" data-g="mount"><button class="have" aria-pressed="false"><span class="dot"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span><span class="name">Phone tripod / mount for filming</span></button><span class="tag">Opt</span></div>
     </div>
   </section>
 
@@ -574,7 +644,7 @@ footer{margin-top:64px;padding-top:22px;border-top:1px solid var(--border);displ
             <div class="steps"><div class="steps-inner"><div class="steps-content">
               <ol>
                 <li>Download and install <strong>STM32CubeIDE</strong> (free, from st.com) and <strong>STM32CubeMX</strong>. You can do this one now, before the boards arrive.</li>
-                <li>Connect the Nucleo board to your Mac over USB. It has a built-in ST-LINK programmer, so no separate programmer hardware is needed.</li>
+                <li>Connect the Nucleo board to your computer over USB. It has a built-in ST-LINK programmer, so no separate programmer hardware is needed.</li>
                 <li>In STM32CubeIDE, check for an official example project for the VL53L8A1 (ST publishes X-CUBE expansion software packages with ready-made ranging examples). Start from that instead of writing the driver code from scratch.</li>
                 <li>Build and flash the example, then open a serial terminal to confirm you're getting live distance readings.</li>
               </ol>
@@ -679,7 +749,7 @@ footer{margin-top:64px;padding-top:22px;border-top:1px solid var(--border);displ
     <div class="reveal">
       <p class="phase-kicker"><span class="phase-num"><span class="n">03</span><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span>Phase 3 · Capstone</p>
       <h2>Code Axiom <span class="badge green">Full build</span></h2>
-      <p class="desc">Table-mounted claw, speaking through a gutted 3rd-gen Echo, woken by "Axiom," powered by the Claude API. Layered wake design: the ToF sensor detects when you approach and puts the system into a low-power "alert" state, but only the spoken word "Axiom" actually triggers a response. The N6 board is the ears, the ToF sensor is the sense of presence, the Uno + servos are the hands, your MacBook is the brain, and the Echo speaker is the mouth.</p>
+      <p class="desc">Table-mounted claw, speaking through a gutted 3rd-gen Echo, woken by "Axiom," powered by the Claude API. Layered wake design: the ToF sensor detects when you approach and puts the system into a low-power "alert" state, but only the spoken word "Axiom" actually triggers a response. The N6 board is the ears, the ToF sensor is the sense of presence, the Uno + servos are the hands, your computer is the brain, and the Echo speaker is the mouth.</p>
       <div class="phase-meter"><span class="pm-count">0/10</span><div class="bar"><i></i></div></div>
     </div>
 
@@ -697,7 +767,7 @@ footer{margin-top:64px;padding-top:22px;border-top:1px solid var(--border);displ
         </button>
       </div>
 
-      <div class="diagram-scroll"><svg class="diagram" id="diagram" viewBox="0 0 900 640" role="img" aria-label="Wiring map: a ToF presence sensor connects to the N6 board, which connects by USB to the MacBook. The MacBook connects by USB to the Uno and by audio cable to the amp board. The Uno connects to a second ToF sensor and the claw servos. The amp board connects to the salvaged speaker and its own USB power.">
+      <div class="diagram-scroll"><svg class="diagram" id="diagram" viewBox="0 0 900 640" role="img" aria-label="Wiring map: a ToF presence sensor connects to the N6 board, which connects by USB to the computer. The computer connects by USB to the Uno and by audio cable to the amp board. The Uno connects to a second ToF sensor and the claw servos. The amp board connects to the salvaged speaker and its own USB power.">
         <defs>
           <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--border-strong)"/></marker>
         </defs>
@@ -733,10 +803,10 @@ footer{margin-top:64px;padding-top:22px;border-top:1px solid var(--border);displ
             <text x="450" y="132" text-anchor="middle" font-weight="600">N6 board</text>
             <text class="role" x="450" y="150" text-anchor="middle">the ears</text>
           </g>
-          <g class="node" data-n="mac" tabindex="0" role="button" aria-label="MacBook, the brain">
+          <g class="node" data-n="mac" tabindex="0" role="button" aria-label="Computer, the brain">
             <rect class="halo" x="348" y="306" width="204" height="80" rx="16"/>
             <rect class="body" x="360" y="318" width="180" height="56" rx="10"/>
-            <text x="450" y="342" text-anchor="middle" font-weight="600">MacBook</text>
+            <text x="450" y="342" text-anchor="middle" font-weight="600">Computer</text>
             <text class="role" x="450" y="360" text-anchor="middle">the brain</text>
           </g>
           <g class="node" data-n="uno" tabindex="0" role="button" aria-label="Uno, the hands">
@@ -776,7 +846,7 @@ footer{margin-top:64px;padding-top:22px;border-top:1px solid var(--border);displ
 
       <div class="caption"><span class="step" id="cap-step">TAP</span><span class="txt" id="cap-txt">Tap any part to see its job, or run the simulation to watch a wake travel through the system.</span></div>
       <div class="dots" id="dots" aria-hidden="true"></div>
-      <figcaption>Everything connects to the MacBook, the N6 board, or the Uno. Nothing connects sensor-to-sensor or servo-to-speaker directly.</figcaption>
+      <figcaption>Everything connects to the computer, the N6 board, or the Uno. Nothing connects sensor-to-sensor or servo-to-speaker directly.</figcaption>
     </figure>
 
     <div class="track">
@@ -787,7 +857,7 @@ footer{margin-top:64px;padding-top:22px;border-top:1px solid var(--border);displ
           <label class="check"><input type="checkbox" data-id="p3-echo-teardown" aria-label="Mark complete"><span class="box"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span></label>
           <div class="item-body">
             <h4 class="item-title">Stage 1: Salvage the Echo</h4>
-            <p class="item-note">Get the speaker driver and enclosure out cleanly. Don't rely on the Echo's own mic array or its internal electronics for anything else.</p>
+            <p class="item-note">Get the speaker driver and enclosure out cleanly. Don't rely on the Echo's own mic array or its internal electronics for anything else. No Echo? Any small 4–8Ω speaker works; skip to Stage 2.</p>
             <button class="steps-toggle" aria-expanded="false">Steps <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 2l4 4-4 4"/></svg></button>
             <div class="steps"><div class="steps-inner"><div class="steps-content">
               <ol>
@@ -811,9 +881,9 @@ footer{margin-top:64px;padding-top:22px;border-top:1px solid var(--border);displ
             <div class="steps"><div class="steps-inner"><div class="steps-content">
               <ol>
                 <li>Wire the PAM8403's speaker output terminals to the two wires you cut from the Echo's driver.</li>
-                <li>Wire the PAM8403's audio input to your MacBook's headphone/audio-out jack (a cheap 3.5mm cable cut in half works, or an aux cable with bare wire ends).</li>
+                <li>Wire the PAM8403's audio input to your computer's headphone/audio-out jack (a cheap 3.5mm cable cut in half works, or an aux cable with bare wire ends).</li>
                 <li>Power the PAM8403 from a 5V source. A spare USB cable works; most of these boards accept 5V over USB power pins.</li>
-                <li>Test it early: play any audio from your MacBook and confirm sound comes out of the salvaged speaker before building anything else on top of this.</li>
+                <li>Test it early: play any audio from your computer and confirm sound comes out of the salvaged speaker before building anything else on top of this.</li>
               </ol>
             </div></div></div>
           </div>
@@ -850,7 +920,7 @@ footer{margin-top:64px;padding-top:22px;border-top:1px solid var(--border);displ
               <ol>
                 <li>Connect a microphone to the NUCLEO-N657X0-Q. Check its datasheet for the mic input; it may need a digital MEMS mic on a breakout, or accept one over an onboard connector.</li>
                 <li>In STM32CubeIDE, look for ST's audio/keyword-spotting example project in the X-CUBE-AI or Model Zoo packages. Start from a working example rather than training a model from scratch.</li>
-                <li>If ST's example uses a different wake word, keep their example word working first, confirm the whole pipeline, and swap in your own trained "Axiom" model second. Don't debug two unknowns (the hardware pipeline and a custom word) at the same time.</li>
+                <li>If ST's example uses a different wake word, keep their example word working first, confirm the whole pipeline, and swap in your own trained wake word ("Axiom," or a name you pick) second. Don't debug two unknowns (the hardware pipeline and a custom word) at the same time.</li>
                 <li>Gate this loop behind Stage 3's "alert" state, so wake-word detection only runs when the ToF sensor says someone's there. This is the power/false-trigger benefit of the layered design.</li>
                 <li>Once "Axiom" reliably triggers, add a simple action: light a second LED or print over serial, so you can confirm detection before wiring it to anything else.</li>
               </ol>
@@ -863,14 +933,14 @@ footer{margin-top:64px;padding-top:22px;border-top:1px solid var(--border);displ
         <div class="item-head">
           <label class="check"><input type="checkbox" data-id="p3-bridge" aria-label="Mark complete"><span class="box"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span></label>
           <div class="item-body">
-            <h4 class="item-title">Stage 5: Bridge the wake word to your MacBook</h4>
+            <h4 class="item-title">Stage 5: Bridge the wake word to your computer</h4>
             <button class="steps-toggle" aria-expanded="false">Steps <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 2l4 4-4 4"/></svg></button>
             <div class="steps"><div class="steps-inner"><div class="steps-content">
               <ol>
-                <li>Connect the N6 board to your MacBook over USB (it will show up as a serial device).</li>
+                <li>Connect the N6 board to your computer over USB (it will show up as a serial device).</li>
                 <li>On the N6 side, send a simple message (like the text "WAKE") over serial the moment it detects "Axiom."</li>
-                <li>On the MacBook side, add a small piece of code to your existing Axiom project that watches that serial port and starts your normal listen-and-respond flow the moment "WAKE" arrives.</li>
-                <li>Test end to end: say "Axiom," confirm your MacBook's existing code kicks in exactly like it does today when you trigger it manually.</li>
+                <li>On the computer side, add a small piece of code to your Python voice app that watches that serial port and starts your normal listen-and-respond flow the moment "WAKE" arrives.</li>
+                <li>Test end to end: say "Axiom," confirm your voice app kicks in exactly like it does with the keypress.</li>
               </ol>
             </div></div></div>
           </div>
@@ -890,7 +960,7 @@ footer{margin-top:64px;padding-top:22px;border-top:1px solid var(--border);displ
                 <li>Wire the servos to the Uno the same way you did in Phase 1.</li>
                 <li>Mount one ToF sensor near the claw's grip point, wired to the Uno over I2C.</li>
                 <li>Write a simple Uno sketch: wait for a serial command, check the ToF reading, only close the servo if something is within a set distance, then report back "done" or "nothing there" over serial.</li>
-                <li>Connect the Uno to your MacBook over its own USB cable (a second serial connection, separate from the N6 board's).</li>
+                <li>Connect the Uno to your computer over its own USB cable (a second serial connection, separate from the N6 board's).</li>
               </ol>
             </div></div></div>
           </div>
@@ -905,8 +975,8 @@ footer{margin-top:64px;padding-top:22px;border-top:1px solid var(--border);displ
             <button class="steps-toggle" aria-expanded="false">Steps <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 2l4 4-4 4"/></svg></button>
             <div class="steps"><div class="steps-inner"><div class="steps-content">
               <ol>
-                <li>In your MacBook's Axiom code, add logic so that when Claude's response implies a physical action ("grab it," "pick that up"), it sends the matching command over the Uno's serial connection.</li>
-                <li>Route Axiom's spoken response through the PAM8403 amp/Echo speaker instead of your MacBook's built-in speakers.</li>
+                <li>In your voice app, add logic so that when Claude's response implies a physical action ("grab it," "pick that up"), it sends the matching command over the Uno's serial connection.</li>
+                <li>Route Axiom's spoken response through the PAM8403 amp/Echo speaker instead of your computer's built-in speakers.</li>
                 <li>Run a full loop: say "Axiom," ask it to grab something, confirm the claw only closes when the ToF sensor sees an object, and confirm the response plays through the salvaged speaker.</li>
               </ol>
             </div></div></div>
@@ -947,7 +1017,7 @@ footer{margin-top:64px;padding-top:22px;border-top:1px solid var(--border);displ
   </section>
 
   <footer>
-    <span>Progress saved locally in this browser · Axiom Build Roadmap</span>
+    <span>Built in public by <a href="https://github.com/RobertMartinez19" target="_blank" rel="noopener">@RobertMartinez19</a> · Progress saves in your browser only</span>
     <button class="hold" id="hold-reset" aria-label="Hold to reset all progress">Hold to reset progress<span class="fillr" aria-hidden="true">Keep holding…</span></button>
   </footer>
 </main>
@@ -1000,8 +1070,8 @@ footer{margin-top:64px;padding-top:22px;border-top:1px solid var(--border);displ
     pctAnim = requestAnimationFrame(tick);
   }
 
-  var phaseNames = { now:'Now', '1':'Phase 1', '2':'Phase 2', '3':'Phase 3' };
-  var phaseTitles = { now:'Pre-hardware prep', '1':'Arduino Fundamentals', '2':'ToF Sensor Demo', '3':'Code Axiom' };
+  var phaseNames = { now:'Plan', '1':'Phase 1', '2':'Phase 2', '3':'Phase 3' };
+  var phaseTitles = { now:'Plan before you build', '1':'Arduino Fundamentals', '2':'ToF Sensor Demo', '3':'Code Axiom' };
 
   function update(fromUser){
     var total = boxes.length, done = 0, current = null;
@@ -1103,7 +1173,7 @@ footer{margin-top:64px;padding-top:22px;border-top:1px solid var(--border);displ
       setTab(t.getAttribute('data-target'));
     });
   });
-  var sections = ['now','gear','phase-1','phase-2','phase-3'].map(function(id){ return document.getElementById(id); });
+  var sections = ['start','now','gear','phase-1','phase-2','phase-3'].map(function(id){ return document.getElementById(id); });
   var ticking = false;
   function onScroll(){
     if (ticking) return; ticking = true;
@@ -1119,9 +1189,43 @@ footer{margin-top:64px;padding-top:22px;border-top:1px solid var(--border);displ
   window.addEventListener('resize', function(){ if (activeTab) slideTo(ind, activeTab, tabsEl); slideTo(pill, activeFilter, filtersEl); });
   onScroll();
 
-  /* ---------- Equipment filter (FLIP) ---------- */
+  /* ---------- Gear checklist + filter (FLIP) ---------- */
+  var GEAR_KEY = 'axiom-roadmap-gear-v1';
+  var gearState = load(GEAR_KEY, {}) || {};
   var filtersEl = $('#filters'), pill = $('#filter-pill'), filters = $$('.filter'), gear = $$('.gear');
   var activeFilter = filters[0];
+  function gearCount(){
+    var n = gear.filter(function(g){ return g.classList.contains('has'); }).length;
+    $('#stat-gear').textContent = n; $('#stat-gear-total').textContent = gear.length;
+  }
+  function applyFilter(){
+    var key = activeFilter.getAttribute('data-f');
+    var first = new Map(); gear.forEach(function(g){ if (!g.hidden) first.set(g, g.getBoundingClientRect()); });
+    gear.forEach(function(g){ var has = g.classList.contains('has'); g.hidden = !(key === 'all' || (key === 'have') === has); });
+    if (reduce) return;
+    gear.forEach(function(g){
+      if (g.hidden) return;
+      var last = g.getBoundingClientRect(), f0 = first.get(g);
+      if (f0){
+        var dx = f0.left - last.left, dy = f0.top - last.top;
+        if (dx || dy) g.animate([{ transform:'translate(' + dx + 'px,' + dy + 'px)' }, { transform:'none' }], { duration:420, easing:'cubic-bezier(0.23,1,0.32,1)' });
+      } else {
+        g.animate([{ opacity:0, transform:'scale(.96)' }, { opacity:1, transform:'none' }], { duration:280, easing:'cubic-bezier(0.23,1,0.32,1)' });
+      }
+    });
+  }
+  gear.forEach(function(g){
+    var id = g.getAttribute('data-g'), btn = $('.have', g);
+    var has = !!gearState[id];
+    g.classList.toggle('has', has); btn.setAttribute('aria-pressed', has);
+    btn.addEventListener('click', function(){
+      has = !g.classList.contains('has');
+      g.classList.toggle('has', has); btn.setAttribute('aria-pressed', has);
+      gearState[id] = has; save(GEAR_KEY, gearState); gearCount();
+      if (activeFilter.getAttribute('data-f') !== 'all') setTimeout(applyFilter, 260);
+    });
+  });
+  gearCount();
   requestAnimationFrame(function(){ slideTo(pill, activeFilter, filtersEl); });
   filters.forEach(function(f){
     f.addEventListener('click', function(){
@@ -1129,20 +1233,7 @@ footer{margin-top:64px;padding-top:22px;border-top:1px solid var(--border);displ
       activeFilter = f;
       filters.forEach(function(x){ x.setAttribute('aria-pressed', x === f ? 'true' : 'false'); });
       slideTo(pill, f, filtersEl);
-      var key = f.getAttribute('data-f');
-      var first = new Map(); gear.forEach(function(g){ if (!g.hidden) first.set(g, g.getBoundingClientRect()); });
-      gear.forEach(function(g){ g.hidden = !(key === 'all' || g.getAttribute('data-status') === key); });
-      gear.forEach(function(g){
-        if (g.hidden) return;
-        var last = g.getBoundingClientRect(), f0 = first.get(g);
-        if (reduce){ return; }
-        if (f0){
-          var dx = f0.left - last.left, dy = f0.top - last.top;
-          if (dx || dy) g.animate([{ transform:'translate(' + dx + 'px,' + dy + 'px)' }, { transform:'none' }], { duration:420, easing:'cubic-bezier(0.23,1,0.32,1)' });
-        } else {
-          g.animate([{ opacity:0, transform:'scale(.96)' }, { opacity:1, transform:'none' }], { duration:280, easing:'cubic-bezier(0.23,1,0.32,1)' });
-        }
-      });
+      applyFilter();
     });
   });
 
@@ -1150,19 +1241,19 @@ footer{margin-top:64px;padding-top:22px;border-top:1px solid var(--border);displ
   var info = {
     tof1:{ t:'ToF · presence', d:'VL53L8 facing outward. Sees someone approach and flips the N6 from idle to alert. It never triggers a response on its own. Stage 3.' },
     n6:  { t:'N6 board · the ears', d:'NUCLEO-N657X0-Q. Runs wake-word detection on its NPU only while in alert, then sends "WAKE" over USB serial. Stages 4–5.' },
-    mac: { t:'MacBook · the brain', d:'Your existing axiom.py. Listens, sends the request to the Claude API, speaks the reply, and sends claw commands to the Uno. Stage 7.' },
+    mac: { t:'Computer · the brain', d:'Your Python voice app from the Plan section. Listens, sends the request to the Claude API, speaks the reply, and sends claw commands to the Uno. Stage 7.' },
     uno: { t:'Uno · the hands', d:'ELEGOO Uno R3 over its own USB serial link. Receives a grab command, checks the grip sensor, drives the servos, and reports back. Stage 6.' },
     servo:{ t:'Servos', d:'SG90s driving the claw. Same PWM pattern as your Phase 1 servo sweep.' },
     tof2:{ t:'ToF · grip check', d:'Second sensor at the claw. The claw only closes if something is actually within reach.' },
-    amp: { t:'Amp board · PAM8403', d:'Turns the MacBook\'s line-level audio into enough power to drive the salvaged Echo speaker. Stage 2.' },
+    amp: { t:'Amp board · PAM8403', d:'Turns the computer\'s line-level audio into enough power to drive the salvaged Echo speaker. Stage 2.' },
     spk: { t:'Speaker · the mouth', d:'The driver salvaged from the 3rd-gen Echo. Axiom\'s voice comes out here. Stage 1.' },
     pwr: { t:'USB power', d:'5V supply for the amp board only. It carries no data.' }
   };
   var steps = [
     { s:'idle',  n:['tof1'],               w:[],            c:'Nobody around. The ToF sensor scans while the N6 stays in low-power idle.' },
     { s:'alert', n:['tof1','n6'],          w:['w1'],        c:'Someone walks up. The ToF reports presence over I2C, and the N6 switches to alert and starts listening.' },
-    { s:'awake', n:['n6','mac'],           w:['w2'],        c:'"Axiom" is heard. The N6 sends WAKE over USB serial and the MacBook starts its listen-and-respond flow.' },
-    { s:'awake', n:['mac'],                w:[],            c:'The MacBook sends the request to the Claude API and gets back a reply plus any physical action.' },
+    { s:'awake', n:['n6','mac'],           w:['w2'],        c:'"Axiom" is heard. The N6 sends WAKE over USB serial and the computer starts its listen-and-respond flow.' },
+    { s:'awake', n:['mac'],                w:[],            c:'The computer sends the request to the Claude API and gets back a reply plus any physical action.' },
     { s:'awake', n:['mac','uno','tof2','servo'], w:['w3','w6','w5'], c:'"Grab it." The command goes to the Uno, the grip sensor confirms an object, and the servos close the claw.' },
     { s:'awake', n:['mac','amp','spk','pwr'],    w:['w4','w7'],      c:'The reply plays through the PAM8403 into the salvaged Echo speaker.' },
     { s:'idle',  n:[],                     w:[],            c:'You walk away. The ToF sees no one and the system drops back to idle.' }
