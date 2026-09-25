@@ -1,0 +1,1261 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Axiom Build Roadmap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4f3ee; --surface:#ffffff; --surface-2:#ecebe4; --glass:rgba(250,249,245,.72);
+  --text:#18201c; --text-muted:#5a635e; --border:#dcdbd2; --border-strong:#c6c5ba;
+  --accent:#1f7a5c; --accent-ink:#ffffff; --accent-soft:#dcefe6; --accent-glow:rgba(31,122,92,.28);
+  --amber:#a8661a; --amber-soft:#f5e6d0; --done-bg:#eaf5ef; --code-bg:#ecebe4;
+  --blob-a:rgba(31,122,92,.16); --blob-b:rgba(181,112,30,.12);
+  --shadow:0 1px 2px rgba(20,30,25,.05),0 8px 24px -12px rgba(20,30,25,.12);
+  --ease-out:cubic-bezier(0.23,1,0.32,1);
+  --ease-in-out:cubic-bezier(0.77,0,0.175,1);
+  --ease-drawer:cubic-bezier(0.32,0.72,0,1);
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f1314; --surface:#171d1f; --surface-2:#1e2629; --glass:rgba(15,19,20,.7);
+    --text:#e8ece9; --text-muted:#98a29c; --border:#27302f; --border-strong:#34403e;
+    --accent:#4fd8a0; --accent-ink:#0b1410; --accent-soft:#16302a; --accent-glow:rgba(79,216,160,.3);
+    --amber:#e3a458; --amber-soft:#35291a; --done-bg:#142420; --code-bg:#1e2629;
+    --blob-a:rgba(79,216,160,.10); --blob-b:rgba(227,164,88,.07);
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px -14px rgba(0,0,0,.6);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f1314; --surface:#171d1f; --surface-2:#1e2629; --glass:rgba(15,19,20,.7);
+  --text:#e8ece9; --text-muted:#98a29c; --border:#27302f; --border-strong:#34403e;
+  --accent:#4fd8a0; --accent-ink:#0b1410; --accent-soft:#16302a; --accent-glow:rgba(79,216,160,.3);
+  --amber:#e3a458; --amber-soft:#35291a; --done-bg:#142420; --code-bg:#1e2629;
+  --blob-a:rgba(79,216,160,.10); --blob-b:rgba(227,164,88,.07);
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px -14px rgba(0,0,0,.6);
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:84px}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font:15px/1.5 "IBM Plex Sans",system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  transition:background-color .35s ease,color .35s ease;
+  overflow-x:hidden;
+}
+.mono{font-family:"IBM Plex Mono",ui-monospace,monospace}
+button{font:inherit;color:inherit}
+a{color:inherit}
+
+/* ---------- Ambient background ---------- */
+.ambient{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+.ambient .blob{position:absolute;width:60vmax;height:60vmax;border-radius:50%;filter:blur(60px);will-change:transform}
+.ambient .a{background:radial-gradient(circle,var(--blob-a),transparent 65%);top:-25vmax;left:-15vmax;animation:drift-a 38s ease-in-out infinite alternate}
+.ambient .b{background:radial-gradient(circle,var(--blob-b),transparent 65%);bottom:-30vmax;right:-20vmax;animation:drift-b 46s ease-in-out infinite alternate}
+.ambient .grid{position:absolute;inset:0;
+  background-image:radial-gradient(var(--border-strong) 1px,transparent 1px);background-size:26px 26px;
+  -webkit-mask-image:radial-gradient(ellipse 80% 55% at 50% 0%,#000 20%,transparent 75%);
+          mask-image:radial-gradient(ellipse 80% 55% at 50% 0%,#000 20%,transparent 75%);opacity:.55}
+@keyframes drift-a{to{transform:translate(12vmax,8vmax) scale(1.08)}}
+@keyframes drift-b{to{transform:translate(-10vmax,-6vmax) scale(1.12)}}
+
+/* ---------- Top bar ---------- */
+.topbar{
+  position:sticky;top:0;z-index:20;
+  background:var(--glass);
+  -webkit-backdrop-filter:blur(18px) saturate(170%);backdrop-filter:blur(18px) saturate(170%);
+  border-bottom:1px solid transparent;
+  transition:border-color .25s ease,box-shadow .25s ease;
+  padding-top:env(safe-area-inset-top,0px);
+}
+.topbar.scrolled{border-bottom-color:var(--border);box-shadow:0 6px 20px -16px rgba(0,0,0,.35)}
+.topbar-inner{max-width:880px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;gap:14px}
+.ring{position:relative;width:40px;height:40px;flex-shrink:0}
+.ring svg{width:40px;height:40px;transform:rotate(-90deg)}
+.ring .track{stroke:var(--surface-2)}
+.ring .fill{stroke:var(--accent);stroke-linecap:round;transition:stroke-dashoffset .7s var(--ease-out)}
+.ring .pct{position:absolute;inset:0;display:grid;place-items:center;font:600 10.5px "IBM Plex Mono",monospace;font-variant-numeric:tabular-nums}
+.ring.pulse{animation:ring-pulse .6s var(--ease-out)}
+@keyframes ring-pulse{40%{transform:scale(1.12)}}
+
+.tabs{position:relative;display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;flex:1;min-width:0;padding:4px 0}
+.tabs::-webkit-scrollbar{display:none}
+.tab{
+  position:relative;z-index:1;flex-shrink:0;border:0;background:none;cursor:pointer;
+  padding:7px 12px;border-radius:999px;
+  font:500 12px "IBM Plex Mono",monospace;letter-spacing:.03em;color:var(--text-muted);
+  transition:color .2s ease,transform .16s var(--ease-out);
+  -webkit-tap-highlight-color:transparent;
+}
+.tab:active{transform:scale(.96)}
+.tab[aria-current="true"]{color:var(--accent-ink)}
+.tab-indicator{
+  position:absolute;left:0;top:4px;height:calc(100% - 8px);width:0;border-radius:999px;background:var(--accent);
+  transition:transform .45s var(--ease-out),width .45s var(--ease-out),opacity .2s ease;opacity:0;
+}
+.icon-btn{
+  width:36px;height:36px;border-radius:10px;border:1px solid var(--border);background:var(--surface);
+  display:grid;place-items:center;cursor:pointer;flex-shrink:0;
+  transition:transform .16s var(--ease-out),border-color .2s ease;
+}
+.icon-btn:active{transform:scale(.94)}
+.icon-btn svg{width:17px;height:17px}
+.icon-btn .sun{display:none}
+:root[data-theme="dark"] .icon-btn .sun{display:block}
+:root[data-theme="dark"] .icon-btn .moon{display:none}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .icon-btn .sun{display:block}
+  :root:not([data-theme="light"]) .icon-btn .moon{display:none}
+}
+
+/* ---------- Layout ---------- */
+.wrap{max-width:880px;margin:0 auto;padding:0 20px 80px}
+
+/* ---------- Hero ---------- */
+.hero{padding:56px 0 36px}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font:500 12px "IBM Plex Mono",monospace;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);margin:0 0 14px}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--amber);position:relative}
+.live-dot::after{content:"";position:absolute;inset:0;border-radius:50%;background:var(--amber);animation:ping 2.4s var(--ease-out) infinite}
+@keyframes ping{0%{transform:scale(1);opacity:.7}80%,100%{transform:scale(2.8);opacity:0}}
+h1{
+  font:600 clamp(34px,7vw,58px)/1.02 "IBM Plex Mono",monospace;letter-spacing:-.035em;margin:0 0 16px;
+}
+h1 .w{display:inline-block;opacity:0;transform:translateY(14px);filter:blur(6px);
+  animation:word-in .8s var(--ease-out) forwards;animation-delay:calc(var(--i) * 70ms + 80ms)}
+h1 .accent{color:var(--accent)}
+@keyframes word-in{to{opacity:1;transform:none;filter:blur(0)}}
+.sub{color:var(--text-muted);font-size:16px;line-height:1.6;max-width:60ch;margin:0 0 30px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.stat{
+  background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px 16px;box-shadow:var(--shadow);
+}
+.stat .k{font:500 10.5px "IBM Plex Mono",monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted)}
+.stat .v{font:600 26px/1.15 "IBM Plex Mono",monospace;letter-spacing:-.02em;font-variant-numeric:tabular-nums;margin-top:4px}
+.stat .v small{font-size:13px;color:var(--text-muted);font-weight:500;letter-spacing:0}
+.stat.amber .v{color:var(--amber)}
+.stat.green .v{color:var(--accent)}
+.bar{height:6px;border-radius:999px;background:var(--surface-2);overflow:hidden;margin-top:10px}
+.bar i{display:block;height:100%;width:100%;background:var(--accent);border-radius:inherit;transform-origin:left;transform:scaleX(0);transition:transform .8s var(--ease-out)}
+@media (max-width:640px){.stats{grid-template-columns:repeat(2,1fr)}}
+
+/* ---------- Reveal on scroll ---------- */
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .7s var(--ease-out),transform .7s var(--ease-out);transition-delay:calc(var(--i,0) * 55ms)}
+.reveal.in{opacity:1;transform:none}
+
+/* ---------- Section headings ---------- */
+.section{padding-top:52px;scroll-margin-top:84px}
+.phase-kicker{display:flex;align-items:center;gap:10px;font:500 12px "IBM Plex Mono",monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin:0 0 6px}
+.phase-num{
+  position:relative;width:30px;height:30px;border-radius:9px;display:grid;place-items:center;
+  background:var(--surface);border:1px solid var(--border);color:var(--accent);font-weight:600;
+  transition:background-color .3s ease,border-color .3s ease,color .3s ease;
+}
+.phase-num .n,.phase-num svg{transition:opacity .25s ease,transform .45s var(--ease-out)}
+.phase-num svg{position:absolute;width:16px;height:16px;opacity:0;transform:scale(.6) rotate(-20deg)}
+.phase-num.complete{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.phase-num.complete .n{opacity:0;transform:scale(.6)}
+.phase-num.complete svg{opacity:1;transform:none}
+h2{font:600 clamp(22px,4vw,28px)/1.2 "IBM Plex Mono",monospace;letter-spacing:-.02em;margin:0 0 8px;display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.desc{color:var(--text-muted);font-size:14.5px;line-height:1.6;margin:0 0 22px;max-width:64ch}
+.badge{font:500 10px "IBM Plex Mono",monospace;letter-spacing:.06em;text-transform:uppercase;padding:4px 9px;border-radius:999px;background:var(--amber-soft);color:var(--amber);white-space:nowrap}
+.badge.green{background:var(--accent-soft);color:var(--accent)}
+.phase-meter{display:flex;align-items:center;gap:10px;margin:0 0 18px;font:500 12px "IBM Plex Mono",monospace;color:var(--text-muted);font-variant-numeric:tabular-nums}
+.phase-meter .bar{flex:1;max-width:220px;margin:0}
+
+/* ---------- Timeline + items ---------- */
+.track{position:relative;padding-left:28px}
+.rail{position:absolute;left:9px;top:10px;bottom:10px;width:2px;border-radius:2px;background:var(--border);overflow:hidden}
+.rail i{position:absolute;inset:0;background:var(--accent);transform-origin:top;transform:scaleY(0);transition:transform .9s var(--ease-out)}
+
+.item{
+  position:relative;background:var(--surface);border:1px solid var(--border);border-radius:14px;
+  padding:16px 18px;margin-bottom:10px;box-shadow:var(--shadow);
+  transition:background-color .3s ease,border-color .3s ease,transform .2s var(--ease-out),opacity .7s var(--ease-out);
+}
+.item::before{ /* node on the rail */
+  content:"";position:absolute;left:-24px;top:22px;width:10px;height:10px;border-radius:50%;
+  background:var(--bg);border:2px solid var(--border-strong);
+  transition:background-color .3s ease,border-color .3s ease,transform .4s var(--ease-out);
+}
+.item.done{background:var(--done-bg);border-color:color-mix(in srgb,var(--accent) 45%,var(--border))}
+.item.done::before{background:var(--accent);border-color:var(--accent);transform:scale(1.15)}
+.item-head{display:flex;gap:14px;align-items:flex-start}
+.item-body{flex:1;min-width:0}
+.item-title{
+  font-weight:600;font-size:15.5px;margin:1px 0 4px;
+  text-decoration:line-through;text-decoration-color:transparent;text-decoration-thickness:1.5px;
+  transition:color .3s ease,text-decoration-color .35s ease;
+}
+.item.done .item-title{color:var(--text-muted);text-decoration-color:var(--text-muted)}
+.item-note{color:var(--text-muted);font-size:13.5px;line-height:1.55;margin:0}
+
+/* custom checkbox */
+.check{position:relative;flex-shrink:0;cursor:pointer;-webkit-tap-highlight-color:transparent;margin-top:1px}
+.check input{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer}
+.box{
+  display:grid;place-items:center;width:24px;height:24px;border-radius:8px;
+  border:1.75px solid var(--border-strong);background:var(--surface);
+  transition:background-color .2s ease,border-color .2s ease,transform .16s var(--ease-out),box-shadow .3s ease;
+}
+.check:active .box{transform:scale(.88)}
+.box svg{width:15px;height:15px}
+.box path{fill:none;stroke:var(--accent-ink);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:18;stroke-dashoffset:18;transition:stroke-dashoffset .3s var(--ease-out) .06s}
+.check input:checked + .box{background:var(--accent);border-color:var(--accent);box-shadow:0 0 0 5px var(--accent-glow)}
+.check input:checked + .box path{stroke-dashoffset:0}
+.check input:not(:checked) + .box{box-shadow:0 0 0 0 transparent}
+.check input:focus-visible + .box{outline:2px solid var(--accent);outline-offset:3px}
+.check.pop .box{animation:pop .45s var(--ease-out)}
+@keyframes pop{35%{transform:scale(1.18)}}
+
+.video-btn{
+  display:inline-flex;align-items:center;gap:8px;margin-top:12px;
+  font:500 12px "IBM Plex Mono",monospace;text-decoration:none;
+  color:var(--accent-ink);background:var(--accent);padding:8px 13px;border-radius:9px;
+  transition:transform .16s var(--ease-out),filter .2s ease;
+}
+.video-btn svg{width:12px;height:12px;transition:transform .25s var(--ease-out)}
+.video-btn:active{transform:scale(.97)}
+@media (hover:hover) and (pointer:fine){
+  .video-btn:hover{filter:brightness(1.08)}
+  .video-btn:hover svg{transform:translateX(2px)}
+  .item:hover{border-color:var(--border-strong)}
+  .icon-btn:hover{border-color:var(--border-strong)}
+  .tab:not([aria-current="true"]):hover{color:var(--text)}
+}
+
+/* accordion */
+.steps-toggle{
+  display:inline-flex;align-items:center;gap:6px;margin-top:12px;padding:6px 10px 6px 0;border:0;background:none;cursor:pointer;
+  font:500 11.5px "IBM Plex Mono",monospace;letter-spacing:.05em;text-transform:uppercase;color:var(--accent);
+  -webkit-tap-highlight-color:transparent;transition:transform .16s var(--ease-out);
+}
+.steps-toggle:active{transform:scale(.97)}
+.steps-toggle svg{width:12px;height:12px;transition:transform .35s var(--ease-out)}
+.steps-toggle[aria-expanded="true"] svg{transform:rotate(90deg)}
+.video-btn + .steps-toggle{margin-left:12px}
+.steps{display:grid;grid-template-rows:0fr;transition:grid-template-rows .35s var(--ease-out)}
+.steps.open{grid-template-rows:1fr}
+.steps-inner{overflow:hidden;min-height:0}
+.steps-content{
+  margin-top:10px;padding-top:12px;border-top:1px dashed var(--border);
+  opacity:0;transform:translateY(-6px);filter:blur(2px);
+  transition:opacity .25s ease,transform .35s var(--ease-out),filter .25s ease;
+}
+.steps.open .steps-content{opacity:1;transform:none;filter:blur(0);transition-delay:.05s}
+.steps-content h5{font:500 11.5px "IBM Plex Mono",monospace;letter-spacing:.05em;text-transform:uppercase;color:var(--text-muted);margin:14px 0 4px}
+.steps-content h5:first-child{margin-top:0}
+.steps-content ol,.steps-content ul{margin:6px 0 0;padding-left:0;list-style:none;counter-reset:s;font-size:13.8px;line-height:1.6}
+.steps-content li{position:relative;padding-left:32px;margin-bottom:10px;counter-increment:s}
+.steps-content ol li::before{
+  content:counter(s);position:absolute;left:0;top:1px;width:21px;height:21px;border-radius:7px;
+  display:grid;place-items:center;background:var(--surface-2);color:var(--text-muted);
+  font:600 11px "IBM Plex Mono",monospace;
+}
+.steps-content code{background:var(--code-bg);padding:1px 6px;border-radius:5px;font:12.5px "IBM Plex Mono",monospace}
+.table-scroll{overflow-x:auto;margin:0 -2px}
+.mini-table{width:100%;min-width:340px;border-collapse:separate;border-spacing:0;margin:8px 0 12px;font:12.5px "IBM Plex Mono",monospace;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.mini-table th,.mini-table td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--border);border-right:1px solid var(--border)}
+.mini-table tr:last-child td{border-bottom:0}
+.mini-table th:last-child,.mini-table td:last-child{border-right:0}
+.mini-table th{color:var(--text-muted);font-weight:500;background:var(--surface-2)}
+.mini-table td[contenteditable]{outline:none;min-width:48px;transition:background-color .2s ease}
+.mini-table td[contenteditable]:focus{background:var(--accent-soft)}
+.hint{font:11.5px "IBM Plex Mono",monospace;color:var(--text-muted)}
+
+/* ---------- Equipment ---------- */
+.filters{position:relative;display:inline-flex;gap:2px;padding:4px;border-radius:12px;background:var(--surface-2);margin-bottom:16px;max-width:100%;overflow-x:auto;scrollbar-width:none}
+.filters::-webkit-scrollbar{display:none}
+.filter{position:relative;z-index:1;border:0;background:none;padding:7px 13px;border-radius:9px;cursor:pointer;flex-shrink:0;
+  font:500 12px "IBM Plex Mono",monospace;color:var(--text-muted);transition:color .2s ease,transform .16s var(--ease-out);-webkit-tap-highlight-color:transparent}
+.filter:active{transform:scale(.96)}
+.filter[aria-pressed="true"]{color:var(--text)}
+.filter-pill{position:absolute;top:4px;left:0;height:calc(100% - 8px);width:0;border-radius:9px;background:var(--surface);box-shadow:var(--shadow);transition:transform .4s var(--ease-out),width .4s var(--ease-out)}
+.equip{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.gear{
+  display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 14px;font-size:13.5px;box-shadow:var(--shadow);
+  transition:opacity .25s ease,transform .25s var(--ease-out);
+}
+.gear[hidden]{display:none!important}
+.gear .dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;background:var(--accent)}
+.gear[data-status="incoming"] .dot{background:var(--amber);animation:blink 2.4s ease-in-out infinite}
+.gear[data-status="need"] .dot{background:transparent;border:1.75px solid var(--text-muted)}
+@keyframes blink{50%{opacity:.35}}
+.gear .name{flex:1;min-width:0;line-height:1.35}
+.gear .tag{font:500 10px "IBM Plex Mono",monospace;letter-spacing:.05em;text-transform:uppercase;color:var(--text-muted);white-space:nowrap}
+.gear[data-status="incoming"] .tag{color:var(--amber)}
+.gear[data-status="owned"] .tag{color:var(--accent)}
+
+/* ---------- Diagram ---------- */
+.diagram-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:18px;margin:0 0 26px;box-shadow:var(--shadow);overflow:hidden}
+.diagram-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+.states{display:flex;align-items:center;gap:6px;font:500 11px "IBM Plex Mono",monospace;letter-spacing:.05em;text-transform:uppercase}
+.state{padding:5px 10px;border-radius:999px;border:1px solid var(--border);color:var(--text-muted);transition:background-color .3s ease,color .3s ease,border-color .3s ease,transform .3s var(--ease-out)}
+.state.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);transform:scale(1.05)}
+.state.on.alert{background:var(--amber);border-color:var(--amber);color:#fff}
+.states .arr{color:var(--border-strong)}
+.run-btn{
+  display:inline-flex;align-items:center;gap:8px;border:0;cursor:pointer;
+  background:var(--text);color:var(--bg);padding:9px 14px;border-radius:10px;font:500 12px "IBM Plex Mono",monospace;
+  transition:transform .16s var(--ease-out),opacity .2s ease;-webkit-tap-highlight-color:transparent;
+}
+.run-btn:active{transform:scale(.97)}
+.run-btn svg{width:12px;height:12px}
+.run-btn .stop{display:none}
+.run-btn.running .play{display:none}
+.run-btn.running .stop{display:block}
+.diagram-scroll{overflow-x:auto;margin:0 -18px;padding:0 18px;scrollbar-width:none}
+.diagram-scroll::-webkit-scrollbar{display:none}
+.diagram{width:100%;min-width:620px;height:auto;display:block;font-family:"IBM Plex Mono",monospace;color:var(--text)}
+.wire{stroke:var(--border-strong);stroke-width:2;fill:none;transition:stroke .3s ease}
+.flow{stroke:var(--accent);stroke-width:2.5;fill:none;stroke-dasharray:6 10;opacity:0;transition:opacity .3s ease}
+.flow.live{opacity:1;animation:flow .7s linear infinite}
+@keyframes flow{to{stroke-dashoffset:-16}}
+.wire-label{font-size:11px;fill:var(--text-muted);transition:fill .3s ease}
+.wire-label.live{fill:var(--accent)}
+.node{cursor:pointer;outline:none}
+.node .halo{fill:var(--accent);opacity:0;transition:opacity .35s ease}
+.node .body{fill:var(--surface);stroke:var(--border-strong);stroke-width:1.8;transition:fill .3s ease,stroke .3s ease}
+.node text{fill:var(--text);transition:fill .3s ease;pointer-events:none}
+.node .role{fill:var(--text-muted);font-size:11px}
+.node.lit .halo{opacity:.16}
+.node.lit .body{stroke:var(--accent);fill:var(--accent-soft)}
+.node.sel .body{stroke:var(--accent);stroke-width:2.6}
+.node:focus-visible .body{stroke:var(--accent);stroke-width:3}
+@media (hover:hover) and (pointer:fine){.node:hover .body{stroke:var(--accent)}}
+.node.dashed .body{stroke-dasharray:4 4}
+.caption{
+  display:flex;gap:10px;align-items:flex-start;min-height:44px;margin-top:8px;padding:12px 14px;border-radius:12px;background:var(--surface-2);
+  font-size:13.5px;line-height:1.5;
+}
+.caption .step{font:600 11px "IBM Plex Mono",monospace;color:var(--accent);padding-top:2px;white-space:nowrap}
+.caption .txt{transition:opacity .2s ease,transform .3s var(--ease-out),filter .2s ease}
+.caption .txt.swap{opacity:0;transform:translateY(4px);filter:blur(2px)}
+.dots{display:flex;gap:5px;justify-content:center;margin-top:12px}
+.dots i{width:6px;height:6px;border-radius:999px;background:var(--border-strong);transition:background-color .3s ease,transform .35s var(--ease-out)}
+.dots i.on{background:var(--accent);transform:scaleX(2.4)}
+figcaption{font-size:12.5px;color:var(--text-muted);margin-top:12px}
+
+/* ---------- Footer + reset ---------- */
+footer{margin-top:64px;padding-top:22px;border-top:1px solid var(--border);display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;color:var(--text-muted);font:12px "IBM Plex Mono",monospace}
+.hold{
+  position:relative;overflow:hidden;border:1px solid var(--border);background:var(--surface);color:var(--text-muted);
+  padding:9px 14px;border-radius:10px;cursor:pointer;font:500 12px "IBM Plex Mono",monospace;user-select:none;-webkit-user-select:none;
+  transition:transform .16s var(--ease-out);touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+}
+.hold:active{transform:scale(.97)}
+.hold .fillr{position:absolute;inset:0;background:#c2452d;color:#fff;display:grid;place-items:center;clip-path:inset(0 100% 0 0);transition:clip-path .2s var(--ease-out)}
+.hold.holding .fillr{clip-path:inset(0 0 0 0);transition:clip-path 1.4s linear}
+
+/* reveal must win over component transitions (keeps stagger delay + long ease) */
+.item.reveal,.gear.reveal,.stat.reveal,.diagram-card.reveal{
+  transition:opacity .7s var(--ease-out),transform .7s var(--ease-out),background-color .3s ease,border-color .3s ease;
+  transition-delay:calc(var(--i,0) * 55ms);
+}
+
+/* ---------- Toast ---------- */
+.toast{
+  position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));z-index:40;
+  display:flex;align-items:center;gap:10px;padding:12px 16px 12px 12px;border-radius:14px;
+  background:var(--text);color:var(--bg);font-size:13.5px;box-shadow:0 12px 32px -10px rgba(0,0,0,.45);
+  transform:translate(-50%,calc(100% + 40px));opacity:0;
+  transition:transform .45s var(--ease-drawer),opacity .3s ease;pointer-events:none;max-width:calc(100vw - 32px);
+}
+.toast.show{transform:translate(-50%,0);opacity:1}
+.toast .ic{width:26px;height:26px;border-radius:8px;background:var(--accent);display:grid;place-items:center;flex-shrink:0}
+.toast .ic svg{width:14px;height:14px;stroke:var(--accent-ink)}
+
+/* ---------- Reduced motion / transparency ---------- */
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .ambient .blob,.live-dot::after,.gear[data-status="incoming"] .dot{animation:none}
+  h1 .w{animation:fade .3s ease forwards;transform:none;filter:none}
+  .reveal{transform:none;transition:opacity .3s ease}
+  .flow.live{animation:none;stroke-dasharray:none}
+  .steps-content{transform:none;filter:none}
+  .toast{transition:opacity .2s ease;transform:translate(-50%,0)}
+  .check.pop .box,.ring.pulse{animation:none}
+  .tab-indicator,.filter-pill,.rail i,.bar i,.ring .fill{transition-duration:.01s}
+}
+@keyframes fade{to{opacity:1}}
+@media (prefers-reduced-transparency:reduce){.topbar{background:var(--bg);-webkit-backdrop-filter:none;backdrop-filter:none}}
+</style>
+</head>
+<body>
+
+<div class="ambient" aria-hidden="true"><div class="blob a"></div><div class="blob b"></div><div class="grid"></div></div>
+
+<header class="topbar" id="topbar">
+  <div class="topbar-inner">
+    <div class="ring" id="ring" title="Overall progress">
+      <svg viewBox="0 0 40 40" aria-hidden="true"><circle class="track" cx="20" cy="20" r="16" fill="none" stroke-width="4"/><circle class="fill" id="ring-fill" cx="20" cy="20" r="16" fill="none" stroke-width="4" stroke-dasharray="100.53" stroke-dashoffset="100.53"/></svg>
+      <span class="pct" id="ring-pct">0%</span>
+    </div>
+    <nav class="tabs" id="tabs" aria-label="Sections">
+      <span class="tab-indicator" id="tab-indicator"></span>
+      <button class="tab" data-target="now">Now</button>
+      <button class="tab" data-target="gear">Gear</button>
+      <button class="tab" data-target="phase-1">01 Arduino</button>
+      <button class="tab" data-target="phase-2">02 ToF</button>
+      <button class="tab" data-target="phase-3">03 Axiom</button>
+    </nav>
+    <button class="icon-btn" id="theme-btn" aria-label="Toggle dark mode">
+      <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+    </button>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="hero">
+    <p class="eyebrow"><span class="live-dot"></span>Hardware / Portfolio Build · 4 boards in transit</p>
+    <h1 aria-label="Axiom Build Roadmap"><span class="w" style="--i:0">Axiom</span> <span class="w" style="--i:1">Build</span> <span class="w accent" style="--i:2">Roadmap</span></h1>
+    <p class="sub reveal" style="--i:3">Three phases, in order: learn the fundamentals on cheap hardware, run a real ST sensor evaluation, then build the Axiom claw. Check items off as you go. Your progress is saved on this device.</p>
+    <div class="stats">
+      <div class="stat green reveal" style="--i:4"><div class="k">Complete</div><div class="v"><span id="stat-pct">0</span><small>%</small></div><div class="bar"><i id="stat-bar"></i></div></div>
+      <div class="stat reveal" style="--i:5"><div class="k">Tasks done</div><div class="v"><span id="stat-done">0</span><small> / <span id="stat-total">0</span></small></div></div>
+      <div class="stat reveal" style="--i:6"><div class="k">Current phase</div><div class="v" id="stat-phase">Now</div></div>
+      <div class="stat amber reveal" style="--i:7"><div class="k">Boards shipping</div><div class="v">4</div></div>
+    </div>
+  </section>
+
+  <!-- NOW -->
+  <section class="section phase" id="now" data-phase="now">
+    <div class="reveal">
+      <p class="phase-kicker"><span class="phase-num"><span class="n">→</span><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span>While the boards ship</p>
+      <h2>Paper work that becomes proof <span class="badge">No hardware needed</span></h2>
+      <p class="desc">Everything from Will is still in transit. Use the wait to write the FAE-style work product now, then validate it with real measurements the day the boards land.</p>
+      <div class="phase-meter"><span class="pm-count">0/3</span><div class="bar"><i></i></div></div>
+    </div>
+    <div class="track">
+      <div class="rail"><i></i></div>
+
+      <article class="item reveal" data-track>
+        <div class="item-head">
+          <label class="check"><input type="checkbox" data-id="now-matrix" aria-label="Mark complete"><span class="box"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span></label>
+          <div class="item-body">
+            <h4 class="item-title">ToF sensor selection matrix</h4>
+            <p class="item-note">Anchor on the VL53L8 you're getting and compare it against ST's lower-cost single-zone VL53L1X and one competitor's multizone ToF sensor. The question to answer: is 8×8 multizone overkill for presence-wake, or does it earn its cost?</p>
+            <button class="steps-toggle" aria-expanded="false">Columns to fill <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 2l4 4-4 4"/></svg></button>
+            <div class="steps"><div class="steps-inner"><div class="steps-content">
+              <ol>
+                <li>Max range, field of view, and zone count, pulled from each datasheet (cite the page).</li>
+                <li>Active and standby current. This matters because presence-sensing is always on.</li>
+                <li>Interface (I²C speed), supply voltage, and package size.</li>
+                <li>Unit price at 1k qty from a distributor listing, plus whether an eval kit exists.</li>
+                <li>One-paragraph recommendation written as if to a customer building a presence-activated device.</li>
+              </ol>
+            </div></div></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="item reveal" data-track>
+        <div class="item-head">
+          <label class="check"><input type="checkbox" data-id="now-appnote" aria-label="Mark complete"><span class="box"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span></label>
+          <div class="item-body">
+            <h4 class="item-title">Draft the app note: presence-gated wake word</h4>
+            <p class="item-note">"VL53L8 + STM32N6." Write the architecture, power states, I²C setup, and detection thresholds now. Leave blanks for the measured numbers (range, false-trigger rate, standby current) and fill them in during Phase 2.</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="item reveal" data-track>
+        <div class="item-head">
+          <label class="check"><input type="checkbox" data-id="now-cubemx" aria-label="Mark complete"><span class="box"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span></label>
+          <div class="item-body">
+            <h4 class="item-title">Scaffold the N6 state machine in CubeMX</h4>
+            <p class="item-note">Create a CubeMX / CubeIDE project for the NUCLEO-N657X0-Q with the idle → alert → awake state machine stubbed out. It compiles now and gets flashed the day the board arrives.</p>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- GEAR -->
+  <section class="section" id="gear">
+    <div class="reveal">
+      <p class="phase-kicker"><span class="phase-num"><span class="n">00</span></span>Equipment</p>
+      <h2>What you're working with</h2>
+    </div>
+    <div class="filters reveal" id="filters" role="group" aria-label="Filter equipment">
+      <span class="filter-pill" id="filter-pill"></span>
+      <button class="filter" data-f="all" aria-pressed="true">All</button>
+      <button class="filter" data-f="owned" aria-pressed="false">Owned</button>
+      <button class="filter" data-f="incoming" aria-pressed="false">In transit</button>
+      <button class="filter" data-f="need" aria-pressed="false">To get</button>
+    </div>
+    <div class="equip" id="equip">
+      <div class="gear reveal" data-status="owned"><span class="dot"></span><span class="name">ELEGOO Uno R3</span><span class="tag">Owned</span></div>
+      <div class="gear reveal" data-status="owned"><span class="dot"></span><span class="name">Smraza 298pc kit</span><span class="tag">Owned</span></div>
+      <div class="gear reveal" data-status="owned"><span class="dot"></span><span class="name">SG90 servo 4-pack</span><span class="tag">Owned</span></div>
+      <div class="gear reveal" data-status="owned"><span class="dot"></span><span class="name">TRMS multimeter</span><span class="tag">Owned</span></div>
+      <div class="gear reveal" data-status="owned"><span class="dot"></span><span class="name">Tripod / mount</span><span class="tag">Owned</span></div>
+      <div class="gear reveal" data-status="owned"><span class="dot"></span><span class="name">3rd-gen Echo (gut target)</span><span class="tag">Owned</span></div>
+      <div class="gear reveal" data-status="incoming"><span class="dot"></span><span class="name">P-NUCLEO-53L8A1 + SATEL-VL53L8 (ToF)</span><span class="tag">In transit</span></div>
+      <div class="gear reveal" data-status="incoming"><span class="dot"></span><span class="name">P-NUCLEO-IHM03 (motor control)</span><span class="tag">In transit</span></div>
+      <div class="gear reveal" data-status="incoming"><span class="dot"></span><span class="name">NUCLEO-N657X0-Q (STM32N6 AI)</span><span class="tag">In transit</span></div>
+      <div class="gear reveal" data-status="need"><span class="dot"></span><span class="name">PAM8403 mini amp board</span><span class="tag">Need to buy</span></div>
+      <div class="gear reveal" data-status="need"><span class="dot"></span><span class="name">Claw mechanism + base</span><span class="tag">Print or buy?</span></div>
+    </div>
+  </section>
+
+  <!-- PHASE 1 -->
+  <section class="section phase" id="phase-1" data-phase="1">
+    <div class="reveal">
+      <p class="phase-kicker"><span class="phase-num"><span class="n">01</span><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span>Phase 1</p>
+      <h2>Arduino Fundamentals <span class="badge green">Can start today</span></h2>
+      <p class="desc">Three short builds on the Uno before touching the ST kits: digital I/O, analog input, and PWM/motor control. Each one is a real rep you'll reuse directly.</p>
+      <div class="phase-meter"><span class="pm-count">0/3</span><div class="bar"><i></i></div></div>
+    </div>
+    <div class="track">
+      <div class="rail"><i></i></div>
+
+      <article class="item reveal" data-track>
+        <div class="item-head">
+          <label class="check"><input type="checkbox" data-id="p1-led" aria-label="Mark complete"><span class="box"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span></label>
+          <div class="item-body">
+            <h4 class="item-title">LED + button: digital I/O</h4>
+            <p class="item-note">Blink an LED, then read a button press. Covers digital output/input and basic breadboard wiring.</p>
+            <a class="video-btn" href="https://www.youtube.com/playlist?list=PLGs0VKk2DiYx6CMdOQR_hmJ2NbB4mZQn-" target="_blank" rel="noopener"><svg viewBox="0 0 12 12" fill="currentColor"><path d="M3 1.5v9l7.5-4.5z"/></svg>Paul McWhorter: Arduino Lessons (start at Lesson 1)</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="item reveal" data-track>
+        <div class="item-head">
+          <label class="check"><input type="checkbox" data-id="p1-pot" aria-label="Mark complete"><span class="box"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span></label>
+          <div class="item-body">
+            <h4 class="item-title">Potentiometer + buzzer: analog input</h4>
+            <p class="item-note">Read a variable analog value and use it to drive an output. This "read a sensor, react to it" pattern is exactly what the ToF sensor project needs.</p>
+            <a class="video-btn" href="https://www.youtube.com/watch?v=VY8PpEjM6Ik" target="_blank" rel="noopener"><svg viewBox="0 0 12 12" fill="currentColor"><path d="M3 1.5v9l7.5-4.5z"/></svg>Control Buzzer with Arduino and Potentiometer</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="item reveal" data-track>
+        <div class="item-head">
+          <label class="check"><input type="checkbox" data-id="p1-servo" aria-label="Mark complete"><span class="box"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span></label>
+          <div class="item-body">
+            <h4 class="item-title">Servo sweep: PWM / motor control</h4>
+            <p class="item-note">The most important of the three. This carries straight into the ST motor control kit and the claw's actual movement.</p>
+            <a class="video-btn" href="https://www.youtube.com/watch?v=tCYVFxigR3o" target="_blank" rel="noopener"><svg viewBox="0 0 12 12" fill="currentColor"><path d="M3 1.5v9l7.5-4.5z"/></svg>Master Servo SG90 with Arduino in 5 Minutes</a>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- PHASE 2 -->
+  <section class="section phase" id="phase-2" data-phase="2">
+    <div class="reveal">
+      <p class="phase-kicker"><span class="phase-num"><span class="n">02</span><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span>Phase 2</p>
+      <h2>ToF Sensor Demo <span class="badge">Waiting on boards</span></h2>
+      <p class="desc">Your first rep with real ST hardware. Goal: not just a working demo, but a short characterization of the part's real-world performance, which is the thing an FAE actually gets judged on. No video exists for this; follow the steps.</p>
+      <div class="phase-meter"><span class="pm-count">0/5</span><div class="bar"><i></i></div></div>
+    </div>
+    <div class="track">
+      <div class="rail"><i></i></div>
+
+      <article class="item reveal" data-track>
+        <div class="item-head">
+          <label class="check"><input type="checkbox" data-id="p2-setup" aria-label="Mark complete"><span class="box"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span></label>
+          <div class="item-body">
+            <h4 class="item-title">Install STM32CubeIDE and set up the board</h4>
+            <p class="item-note">Kit: P-NUCLEO-53L8A1 (Nucleo board + VL53L8A1 ToF expansion) plus a second sensor variant on the SATEL-VL53L8 satellite board. Both are self-contained, so no external Arduino is needed.</p>
+            <button class="steps-toggle" aria-expanded="false">Steps <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 2l4 4-4 4"/></svg></button>
+            <div class="steps"><div class="steps-inner"><div class="steps-content">
+              <ol>
+                <li>Download and install <strong>STM32CubeIDE</strong> (free, from st.com) and <strong>STM32CubeMX</strong>. You can do this one now, before the boards arrive.</li>
+                <li>Connect the Nucleo board to your Mac over USB. It has a built-in ST-LINK programmer, so no separate programmer hardware is needed.</li>
+                <li>In STM32CubeIDE, check for an official example project for the VL53L8A1 (ST publishes X-CUBE expansion software packages with ready-made ranging examples). Start from that instead of writing the driver code from scratch.</li>
+                <li>Build and flash the example, then open a serial terminal to confirm you're getting live distance readings.</li>
+              </ol>
+            </div></div></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="item reveal" data-track>
+        <div class="item-head">
+          <label class="check"><input type="checkbox" data-id="p2-library" aria-label="Mark complete"><span class="box"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span></label>
+          <div class="item-body">
+            <h4 class="item-title">Get the example ranging code running cleanly</h4>
+            <button class="steps-toggle" aria-expanded="false">Steps <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 2l4 4-4 4"/></svg></button>
+            <div class="steps"><div class="steps-inner"><div class="steps-content">
+              <ol>
+                <li>Use STM32CubeMX to confirm the pin/peripheral configuration matches the expansion board. It auto-generates this for known X-NUCLEO boards, so select the correct expansion in the pinout tool rather than configuring pins by hand.</li>
+                <li>Run the official example unmodified first. Don't customize until you've confirmed baseline readings work.</li>
+                <li>Watch the distance output as you move your hand toward and away from the sensor to confirm it's live and responsive.</li>
+                <li>Once the first sensor works, repeat setup for the SATEL-VL53L8 satellite board so you have two sensors to compare in the characterization step.</li>
+              </ol>
+            </div></div></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="item reveal" data-track>
+        <div class="item-head">
+          <label class="check"><input type="checkbox" data-id="p2-demo" aria-label="Mark complete"><span class="box"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span></label>
+          <div class="item-body">
+            <h4 class="item-title">Build the triggered demo</h4>
+            <p class="item-note">Wire an LED or buzzer from the Smraza kit so it triggers when an object enters a set distance threshold.</p>
+            <button class="steps-toggle" aria-expanded="false">Steps <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 2l4 4-4 4"/></svg></button>
+            <div class="steps"><div class="steps-inner"><div class="steps-content">
+              <ol>
+                <li>Pick a threshold (e.g. under 300mm) and add an <code>if (distance &lt; threshold)</code> check around your existing read loop.</li>
+                <li>Drive an LED or buzzer high when the condition is true, low otherwise.</li>
+                <li>Confirm the trigger feels responsive. If it lags, shorten your read/loop delay.</li>
+              </ol>
+            </div></div></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="item reveal" data-track>
+        <div class="item-head">
+          <label class="check"><input type="checkbox" data-id="p2-characterize" aria-label="Mark complete"><span class="box"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span></label>
+          <div class="item-body">
+            <h4 class="item-title">Characterize real-world performance</h4>
+            <p class="item-note">This is the step that separates a real evaluation from a tutorial follow-along. Log actual numbers.</p>
+            <button class="steps-toggle" aria-expanded="false">Test matrix <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 2l4 4-4 4"/></svg></button>
+            <div class="steps"><div class="steps-inner"><div class="steps-content">
+              <p class="hint">Tap a cell to type your result. Cells save automatically.</p>
+              <div class="table-scroll"><table class="mini-table" id="matrix">
+                <tr><th>Condition</th><th>10cm</th><th>50cm</th><th>1m</th><th>2m</th></tr>
+                <tr><th>Bright light</th><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+                <tr><th>Dim light</th><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+                <tr><th>Angled 45°</th><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+              </table></div>
+              <ol>
+                <li>For each cell, note whether the reading was accurate, drifted, or failed to detect at all.</li>
+                <li>Take a screenshot or photo of at least one serial reading per condition as evidence.</li>
+              </ol>
+            </div></div></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="item reveal" data-track>
+        <div class="item-head">
+          <label class="check"><input type="checkbox" data-id="p2-doc" aria-label="Mark complete"><span class="box"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span></label>
+          <div class="item-body">
+            <h4 class="item-title">Write the README and film the demo</h4>
+            <button class="steps-toggle" aria-expanded="false">Shot list + README <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 2l4 4-4 4"/></svg></button>
+            <div class="steps"><div class="steps-inner"><div class="steps-content">
+              <h5>Video shot list (3–5 min, unlisted on YouTube)</h5>
+              <ol>
+                <li><strong>Intro (15–20s):</strong> name the part, say you're evaluating its real-world performance, not just wiring it up.</li>
+                <li><strong>Setup walkthrough (30–45s):</strong> quick shot of the wiring and code.</li>
+                <li><strong>Live demo (60–90s):</strong> the trigger working in real time.</li>
+                <li><strong>Characterization results (60–90s):</strong> show your test matrix and explain what you found.</li>
+                <li><strong>Wrap-up (15s):</strong> one sentence on what you'd tell a customer evaluating this part.</li>
+              </ol>
+              <h5>README outline</h5>
+              <ol>
+                <li>Overview: one paragraph on what you built and why.</li>
+                <li>Demo video link (unlisted).</li>
+                <li>Hardware: exact part numbers used.</li>
+                <li>What you measured: embed the test matrix.</li>
+                <li>Key findings: 2–3 bullets on real-world behavior.</li>
+                <li>Setup / code: brief instructions, link to your code.</li>
+              </ol>
+            </div></div></div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- PHASE 3 -->
+  <section class="section phase" id="phase-3" data-phase="3">
+    <div class="reveal">
+      <p class="phase-kicker"><span class="phase-num"><span class="n">03</span><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span>Phase 3 · Capstone</p>
+      <h2>Code Axiom <span class="badge green">Full build</span></h2>
+      <p class="desc">Table-mounted claw, speaking through a gutted 3rd-gen Echo, woken by "Axiom," powered by the Claude API. Layered wake design: the ToF sensor detects when you approach and puts the system into a low-power "alert" state, but only the spoken word "Axiom" actually triggers a response. The N6 board is the ears, the ToF sensor is the sense of presence, the Uno + servos are the hands, your MacBook is the brain, and the Echo speaker is the mouth.</p>
+      <div class="phase-meter"><span class="pm-count">0/10</span><div class="bar"><i></i></div></div>
+    </div>
+
+    <figure class="diagram-card reveal" style="margin-left:0;margin-right:0">
+      <div class="diagram-top">
+        <div class="states" aria-live="polite">
+          <span class="state on" data-s="idle">Idle</span><span class="arr">→</span>
+          <span class="state" data-s="alert">Alert</span><span class="arr">→</span>
+          <span class="state" data-s="awake">Awake</span>
+        </div>
+        <button class="run-btn" id="run-btn">
+          <svg class="play" viewBox="0 0 12 12" fill="currentColor"><path d="M3 1.5v9l7.5-4.5z"/></svg>
+          <svg class="stop" viewBox="0 0 12 12" fill="currentColor"><rect x="2" y="2" width="8" height="8" rx="1.5"/></svg>
+          <span>Simulate a wake</span>
+        </button>
+      </div>
+
+      <div class="diagram-scroll"><svg class="diagram" id="diagram" viewBox="0 0 900 640" role="img" aria-label="Wiring map: a ToF presence sensor connects to the N6 board, which connects by USB to the MacBook. The MacBook connects by USB to the Uno and by audio cable to the amp board. The Uno connects to a second ToF sensor and the claw servos. The amp board connects to the salvaged speaker and its own USB power.">
+        <defs>
+          <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--border-strong)"/></marker>
+        </defs>
+        <g id="wires">
+          <g data-w="w1"><path class="wire" d="M450 60 L450 108" marker-end="url(#arrow)"/><path class="flow" d="M450 60 L450 108"/></g>
+          <g data-w="w2"><path class="wire" d="M450 164 L450 318" marker-end="url(#arrow)"/><path class="flow" d="M450 164 L450 318"/></g>
+          <g data-w="w3"><path class="wire" d="M415 374 L230 454" marker-end="url(#arrow)"/><path class="flow" d="M415 374 L230 454"/></g>
+          <g data-w="w4"><path class="wire" d="M485 374 L670 454" marker-end="url(#arrow)"/><path class="flow" d="M485 374 L670 454"/></g>
+          <g data-w="w5"><path class="wire" d="M165 508 L95 568" marker-end="url(#arrow)"/><path class="flow" d="M165 508 L95 568"/></g>
+          <g data-w="w6"><path class="wire" d="M235 508 L270 568" marker-end="url(#arrow)"/><path class="flow" d="M235 508 L270 568"/></g>
+          <g data-w="w7"><path class="wire" d="M700 508 L700 568" marker-end="url(#arrow)"/><path class="flow" d="M700 508 L700 568"/></g>
+          <g data-w="w8"><path class="wire" d="M798 486 L784 486" stroke-dasharray="4 4" marker-end="url(#arrow)"/></g>
+        </g>
+        <g>
+          <text class="wire-label" data-for="w1" x="462" y="88">4 wires (I2C)</text>
+          <text class="wire-label" data-for="w2" x="462" y="245">USB · wake signal</text>
+          <text class="wire-label" data-for="w3" x="232" y="405" transform="rotate(-23 232 405)">USB · commands</text>
+          <text class="wire-label" data-for="w4" x="585" y="392" transform="rotate(23 585 392)">audio cable</text>
+          <text class="wire-label" data-for="w5" x="36" y="540">3 wires each</text>
+          <text class="wire-label" data-for="w6" x="262" y="534">4 wires (I2C)</text>
+          <text class="wire-label" data-for="w7" x="710" y="542">2 wires</text>
+          <text class="wire-label" x="806" y="522" font-size="10">power only</text>
+        </g>
+        <g id="nodes" font-size="13">
+          <g class="node" data-n="tof1" tabindex="0" role="button" aria-label="ToF presence sensor">
+            <rect class="halo" x="368" y="8" width="164" height="64" rx="14"/>
+            <rect class="body" x="380" y="20" width="140" height="40" rx="8"/>
+            <text x="450" y="45" text-anchor="middle" font-size="12">ToF · presence</text>
+          </g>
+          <g class="node" data-n="n6" tabindex="0" role="button" aria-label="N6 board, the ears">
+            <rect class="halo" x="348" y="96" width="204" height="80" rx="16"/>
+            <rect class="body" x="360" y="108" width="180" height="56" rx="10"/>
+            <text x="450" y="132" text-anchor="middle" font-weight="600">N6 board</text>
+            <text class="role" x="450" y="150" text-anchor="middle">the ears</text>
+          </g>
+          <g class="node" data-n="mac" tabindex="0" role="button" aria-label="MacBook, the brain">
+            <rect class="halo" x="348" y="306" width="204" height="80" rx="16"/>
+            <rect class="body" x="360" y="318" width="180" height="56" rx="10"/>
+            <text x="450" y="342" text-anchor="middle" font-weight="600">MacBook</text>
+            <text class="role" x="450" y="360" text-anchor="middle">the brain</text>
+          </g>
+          <g class="node" data-n="uno" tabindex="0" role="button" aria-label="Uno, the hands">
+            <rect class="halo" x="108" y="442" width="184" height="74" rx="16"/>
+            <rect class="body" x="120" y="454" width="160" height="50" rx="10"/>
+            <text x="200" y="475" text-anchor="middle" font-weight="600">Uno</text>
+            <text class="role" x="200" y="492" text-anchor="middle">the hands</text>
+          </g>
+          <g class="node" data-n="servo" tabindex="0" role="button" aria-label="Claw servos">
+            <rect class="halo" x="8" y="556" width="144" height="64" rx="14"/>
+            <rect class="body" x="20" y="568" width="120" height="40" rx="8"/>
+            <text x="80" y="593" text-anchor="middle" font-size="12">Servos</text>
+          </g>
+          <g class="node" data-n="tof2" tabindex="0" role="button" aria-label="ToF grip check sensor">
+            <rect class="halo" x="178" y="556" width="174" height="64" rx="14"/>
+            <rect class="body" x="190" y="568" width="150" height="40" rx="8"/>
+            <text x="265" y="593" text-anchor="middle" font-size="12">ToF · grip check</text>
+          </g>
+          <g class="node" data-n="amp" tabindex="0" role="button" aria-label="PAM8403 amp board">
+            <rect class="halo" x="608" y="442" width="184" height="74" rx="16"/>
+            <rect class="body" x="620" y="454" width="160" height="50" rx="10"/>
+            <text x="700" y="475" text-anchor="middle" font-weight="600">Amp board</text>
+            <text class="role" x="700" y="492" text-anchor="middle">PAM8403</text>
+          </g>
+          <g class="node" data-n="spk" tabindex="0" role="button" aria-label="Speaker, the mouth">
+            <rect class="halo" x="608" y="556" width="184" height="64" rx="14"/>
+            <rect class="body" x="620" y="568" width="160" height="40" rx="8"/>
+            <text x="700" y="593" text-anchor="middle" font-size="12">Speaker · the mouth</text>
+          </g>
+          <g class="node dashed" data-n="pwr" tabindex="0" role="button" aria-label="USB power">
+            <rect class="halo" x="788" y="458" width="104" height="56" rx="12"/>
+            <rect class="body" x="798" y="468" width="86" height="36" rx="7"/>
+            <text x="841" y="490" text-anchor="middle" font-size="10.5">USB power</text>
+          </g>
+        </g>
+      </svg></div>
+
+      <div class="caption"><span class="step" id="cap-step">TAP</span><span class="txt" id="cap-txt">Tap any part to see its job, or run the simulation to watch a wake travel through the system.</span></div>
+      <div class="dots" id="dots" aria-hidden="true"></div>
+      <figcaption>Everything connects to the MacBook, the N6 board, or the Uno. Nothing connects sensor-to-sensor or servo-to-speaker directly.</figcaption>
+    </figure>
+
+    <div class="track">
+      <div class="rail"><i></i></div>
+
+      <article class="item reveal" data-track>
+        <div class="item-head">
+          <label class="check"><input type="checkbox" data-id="p3-echo-teardown" aria-label="Mark complete"><span class="box"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span></label>
+          <div class="item-body">
+            <h4 class="item-title">Stage 1: Salvage the Echo</h4>
+            <p class="item-note">Get the speaker driver and enclosure out cleanly. Don't rely on the Echo's own mic array or its internal electronics for anything else.</p>
+            <button class="steps-toggle" aria-expanded="false">Steps <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 2l4 4-4 4"/></svg></button>
+            <div class="steps"><div class="steps-inner"><div class="steps-content">
+              <ol>
+                <li>Unplug it, then search "3rd gen Echo teardown" for a disassembly guide (iFixit has one). It uses hidden screws under the rubber base and a bit of prying, not obvious from the outside.</li>
+                <li>Identify the round speaker driver and its two wires (positive/negative, often red and black or marked with a + on one terminal).</li>
+                <li>Cut the speaker's wires a few inches from the driver, leaving enough length to work with. Set aside the rest of the internal boards; you won't use the mic array or the Echo's own processor.</li>
+                <li>Keep the plastic housing if you want the final build to look like a proper enclosure rather than exposed electronics.</li>
+              </ol>
+            </div></div></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="item reveal" data-track>
+        <div class="item-head">
+          <label class="check"><input type="checkbox" data-id="p3-amp" aria-label="Mark complete"><span class="box"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span></label>
+          <div class="item-body">
+            <h4 class="item-title">Stage 2: Wire the speaker through an amplifier</h4>
+            <p class="item-note">The salvaged speaker needs amplified audio, not a bare line-level signal. This is what the PAM8403 amp board is for.</p>
+            <button class="steps-toggle" aria-expanded="false">Steps <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 2l4 4-4 4"/></svg></button>
+            <div class="steps"><div class="steps-inner"><div class="steps-content">
+              <ol>
+                <li>Wire the PAM8403's speaker output terminals to the two wires you cut from the Echo's driver.</li>
+                <li>Wire the PAM8403's audio input to your MacBook's headphone/audio-out jack (a cheap 3.5mm cable cut in half works, or an aux cable with bare wire ends).</li>
+                <li>Power the PAM8403 from a 5V source. A spare USB cable works; most of these boards accept 5V over USB power pins.</li>
+                <li>Test it early: play any audio from your MacBook and confirm sound comes out of the salvaged speaker before building anything else on top of this.</li>
+              </ol>
+            </div></div></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="item reveal" data-track>
+        <div class="item-head">
+          <label class="check"><input type="checkbox" data-id="p3-presence-gate" aria-label="Mark complete"><span class="box"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span></label>
+          <div class="item-body">
+            <h4 class="item-title">Stage 3: Wire the ToF presence gate</h4>
+            <p class="item-note">This runs before the wake word and gates it. With no one nearby, the system idles. When someone approaches, it moves to "alert" and starts actively listening for "Axiom."</p>
+            <button class="steps-toggle" aria-expanded="false">Steps <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 2l4 4-4 4"/></svg></button>
+            <div class="steps"><div class="steps-inner"><div class="steps-content">
+              <ol>
+                <li>Mount a ToF sensor facing outward from the table, roughly where someone would stand to talk to it.</li>
+                <li>Wire it to the N6 board over I2C (same connection pattern as Phase 2, different host board).</li>
+                <li>Write simple logic on the N6 board: while no object is within a set range (e.g. under 1.5m), stay idle/low-power. The moment something enters range, switch to an "alert" state. This is also a good moment for a visual cue (an LED) so the demo video shows the system visibly waking up.</li>
+                <li>Confirm this triggers reliably as you walk toward the table and drops back to idle when you step away, before moving on to wake-word detection.</li>
+              </ol>
+            </div></div></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="item reveal" data-track>
+        <div class="item-head">
+          <label class="check"><input type="checkbox" data-id="p3-wakeword" aria-label="Mark complete"><span class="box"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span></label>
+          <div class="item-body">
+            <h4 class="item-title">Stage 4: Get the N6 board listening for "Axiom"</h4>
+            <p class="item-note">This is the hardest software piece in the whole project, so budget real time for it. It only needs to run while the presence gate from Stage 3 is in "alert" mode, not constantly.</p>
+            <button class="steps-toggle" aria-expanded="false">Steps <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 2l4 4-4 4"/></svg></button>
+            <div class="steps"><div class="steps-inner"><div class="steps-content">
+              <ol>
+                <li>Connect a microphone to the NUCLEO-N657X0-Q. Check its datasheet for the mic input; it may need a digital MEMS mic on a breakout, or accept one over an onboard connector.</li>
+                <li>In STM32CubeIDE, look for ST's audio/keyword-spotting example project in the X-CUBE-AI or Model Zoo packages. Start from a working example rather than training a model from scratch.</li>
+                <li>If ST's example uses a different wake word, keep their example word working first, confirm the whole pipeline, and swap in your own trained "Axiom" model second. Don't debug two unknowns (the hardware pipeline and a custom word) at the same time.</li>
+                <li>Gate this loop behind Stage 3's "alert" state, so wake-word detection only runs when the ToF sensor says someone's there. This is the power/false-trigger benefit of the layered design.</li>
+                <li>Once "Axiom" reliably triggers, add a simple action: light a second LED or print over serial, so you can confirm detection before wiring it to anything else.</li>
+              </ol>
+            </div></div></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="item reveal" data-track>
+        <div class="item-head">
+          <label class="check"><input type="checkbox" data-id="p3-bridge" aria-label="Mark complete"><span class="box"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span></label>
+          <div class="item-body">
+            <h4 class="item-title">Stage 5: Bridge the wake word to your MacBook</h4>
+            <button class="steps-toggle" aria-expanded="false">Steps <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 2l4 4-4 4"/></svg></button>
+            <div class="steps"><div class="steps-inner"><div class="steps-content">
+              <ol>
+                <li>Connect the N6 board to your MacBook over USB (it will show up as a serial device).</li>
+                <li>On the N6 side, send a simple message (like the text "WAKE") over serial the moment it detects "Axiom."</li>
+                <li>On the MacBook side, add a small piece of code to your existing Axiom project that watches that serial port and starts your normal listen-and-respond flow the moment "WAKE" arrives.</li>
+                <li>Test end to end: say "Axiom," confirm your MacBook's existing code kicks in exactly like it does today when you trigger it manually.</li>
+              </ol>
+            </div></div></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="item reveal" data-track>
+        <div class="item-head">
+          <label class="check"><input type="checkbox" data-id="p3-hands" aria-label="Mark complete"><span class="box"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span></label>
+          <div class="item-body">
+            <h4 class="item-title">Stage 6: Build the claw and wire the "hands"</h4>
+            <p class="item-note">This is where your Phase 1 servo work and the ToF sensor from Phase 2 both come back directly.</p>
+            <button class="steps-toggle" aria-expanded="false">Steps <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 2l4 4-4 4"/></svg></button>
+            <div class="steps"><div class="steps-inner"><div class="steps-content">
+              <ol>
+                <li>Assemble or 3D-print a small claw/gripper mechanism sized for 1–2 SG90 servos (many free claw designs exist for exactly this servo).</li>
+                <li>Wire the servos to the Uno the same way you did in Phase 1.</li>
+                <li>Mount one ToF sensor near the claw's grip point, wired to the Uno over I2C.</li>
+                <li>Write a simple Uno sketch: wait for a serial command, check the ToF reading, only close the servo if something is within a set distance, then report back "done" or "nothing there" over serial.</li>
+                <li>Connect the Uno to your MacBook over its own USB cable (a second serial connection, separate from the N6 board's).</li>
+              </ol>
+            </div></div></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="item reveal" data-track>
+        <div class="item-head">
+          <label class="check"><input type="checkbox" data-id="p3-integrate" aria-label="Mark complete"><span class="box"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span></label>
+          <div class="item-body">
+            <h4 class="item-title">Stage 7: Tie it all together</h4>
+            <button class="steps-toggle" aria-expanded="false">Steps <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 2l4 4-4 4"/></svg></button>
+            <div class="steps"><div class="steps-inner"><div class="steps-content">
+              <ol>
+                <li>In your MacBook's Axiom code, add logic so that when Claude's response implies a physical action ("grab it," "pick that up"), it sends the matching command over the Uno's serial connection.</li>
+                <li>Route Axiom's spoken response through the PAM8403 amp/Echo speaker instead of your MacBook's built-in speakers.</li>
+                <li>Run a full loop: say "Axiom," ask it to grab something, confirm the claw only closes when the ToF sensor sees an object, and confirm the response plays through the salvaged speaker.</li>
+              </ol>
+            </div></div></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="item reveal" data-track>
+        <div class="item-head">
+          <label class="check"><input type="checkbox" data-id="p3-mount" aria-label="Mark complete"><span class="box"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span></label>
+          <div class="item-body">
+            <h4 class="item-title">Stage 8: Mount everything on the table base</h4>
+            <p class="item-note">Make it look like one finished object, not a pile of wired boards.</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="item reveal" data-track>
+        <div class="item-head">
+          <label class="check"><input type="checkbox" data-id="p3-document" aria-label="Mark complete"><span class="box"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span></label>
+          <div class="item-body">
+            <h4 class="item-title">Stage 9: Document the build and the thinking behind it</h4>
+            <p class="item-note">This is the actual portfolio centerpiece. Write up the decisions (why five separate parts instead of one board doing everything, what broke, what you'd do differently), not just a parts list.</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="item reveal" data-track>
+        <div class="item-head">
+          <label class="check"><input type="checkbox" data-id="p3-video" aria-label="Mark complete"><span class="box"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span></label>
+          <div class="item-body">
+            <h4 class="item-title">Stage 10: Film the final demo</h4>
+            <p class="item-note">Same shot-list structure as the ToF video: intro, live demo, what's happening under the hood, and a wrap-up on what you'd tell someone evaluating this approach.</p>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <footer>
+    <span>Progress saved locally in this browser · Axiom Build Roadmap</span>
+    <button class="hold" id="hold-reset" aria-label="Hold to reset all progress">Hold to reset progress<span class="fillr" aria-hidden="true">Keep holding…</span></button>
+  </footer>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"><span class="ic"><svg viewBox="0 0 20 20" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span><span id="toast-txt"></span></div>
+
+<script>
+(function(){
+  'use strict';
+  var STORAGE_KEY = 'axiom-roadmap-progress-v1';   // same key as v1, so existing progress carries over
+  var MATRIX_KEY  = 'axiom-roadmap-matrix-v1';
+  var THEME_KEY   = 'axiom-roadmap-theme';
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var root = document.documentElement;
+
+  function load(k, fallback){ try { var r = localStorage.getItem(k); return r ? JSON.parse(r) : fallback; } catch(e){ return fallback; } }
+  function save(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
+  function $(s, c){ return (c||document).querySelector(s); }
+  function $$(s, c){ return Array.prototype.slice.call((c||document).querySelectorAll(s)); }
+
+  /* ---------- Theme ---------- */
+  var savedTheme = load(THEME_KEY, null);
+  if (savedTheme) root.setAttribute('data-theme', savedTheme);
+  $('#theme-btn').addEventListener('click', function(){
+    var isDark = root.getAttribute('data-theme') ? root.getAttribute('data-theme') === 'dark'
+               : window.matchMedia('(prefers-color-scheme: dark)').matches;
+    var next = isDark ? 'light' : 'dark';
+    root.setAttribute('data-theme', next); save(THEME_KEY, next);
+  });
+
+  /* ---------- Progress ---------- */
+  var state = load(STORAGE_KEY, {}) || {};
+  var boxes = $$('[data-track] input[type=checkbox]');
+  var phases = $$('.phase');
+  var prevComplete = {};
+  var shownPct = 0, pctAnim = null;
+
+  function countUp(to){
+    var el1 = $('#ring-pct'), el2 = $('#stat-pct');
+    if (reduce){ shownPct = to; el1.textContent = to + '%'; el2.textContent = to; return; }
+    cancelAnimationFrame(pctAnim);
+    var from = shownPct, start = performance.now(), dur = 600;
+    function tick(t){
+      var p = Math.min(1, (t - start) / dur);
+      var e = 1 - Math.pow(1 - p, 4);             // ease-out quart
+      shownPct = Math.round(from + (to - from) * e);
+      el1.textContent = shownPct + '%'; el2.textContent = shownPct;
+      if (p < 1) pctAnim = requestAnimationFrame(tick);
+    }
+    pctAnim = requestAnimationFrame(tick);
+  }
+
+  var phaseNames = { now:'Now', '1':'Phase 1', '2':'Phase 2', '3':'Phase 3' };
+  var phaseTitles = { now:'Pre-hardware prep', '1':'Arduino Fundamentals', '2':'ToF Sensor Demo', '3':'Code Axiom' };
+
+  function update(fromUser){
+    var total = boxes.length, done = 0, current = null;
+    boxes.forEach(function(b){ if (b.checked) done++; });
+    phases.forEach(function(ph){
+      var key = ph.getAttribute('data-phase');
+      var bs = $$('[data-track] input', ph);
+      var d = bs.filter(function(b){ return b.checked; }).length;
+      var p = bs.length ? d / bs.length : 0;
+      $('.pm-count', ph).textContent = d + '/' + bs.length;
+      $('.phase-meter .bar i', ph).style.transform = 'scaleX(' + p + ')';
+      $('.rail i', ph).style.transform = 'scaleY(' + p + ')';
+      var complete = d === bs.length && bs.length > 0;
+      var num = $('.phase-num', ph); if (num) num.classList.toggle('complete', complete);
+      if (fromUser && complete && !prevComplete[key]) toast(phaseNames[key] + ' complete: ' + phaseTitles[key]);
+      prevComplete[key] = complete;
+      if (!complete && current === null) current = key;
+    });
+    var pct = total ? Math.round(done / total * 100) : 0;
+    $('#stat-done').textContent = done; $('#stat-total').textContent = total;
+    $('#stat-bar').style.transform = 'scaleX(' + (done / total) + ')';
+    $('#ring-fill').style.strokeDashoffset = (100.53 * (1 - done / total)).toFixed(2);
+    $('#stat-phase').textContent = current === null ? 'Done' : phaseNames[current];
+    countUp(pct);
+    if (fromUser && !reduce){ var r = $('#ring'); r.classList.remove('pulse'); void r.offsetWidth; r.classList.add('pulse'); }
+  }
+
+  boxes.forEach(function(b){
+    var id = b.getAttribute('data-id');
+    b.checked = !!state[id];
+    b.closest('.item').classList.toggle('done', b.checked);
+    b.addEventListener('change', function(){
+      state[id] = b.checked; save(STORAGE_KEY, state);
+      b.closest('.item').classList.toggle('done', b.checked);
+      var c = b.closest('.check');
+      if (b.checked && !reduce){ c.classList.remove('pop'); void c.offsetWidth; c.classList.add('pop'); }
+      update(true);
+    });
+  });
+  update(false);
+
+  /* ---------- Accordions ---------- */
+  $$('.steps-toggle').forEach(function(btn){
+    var panel = btn.parentNode.querySelector('.steps');
+    btn.addEventListener('click', function(){
+      var open = btn.getAttribute('aria-expanded') !== 'true';
+      btn.setAttribute('aria-expanded', open);
+      panel.classList.toggle('open', open);
+    });
+  });
+
+  /* ---------- Editable test matrix ---------- */
+  var matrix = load(MATRIX_KEY, []);
+  $$('#matrix td[contenteditable]').forEach(function(td, i){
+    if (matrix[i]) td.textContent = matrix[i];
+    td.addEventListener('input', function(){ matrix[i] = td.textContent; save(MATRIX_KEY, matrix); });
+  });
+
+  /* ---------- Scroll reveal (staggered per batch) ---------- */
+  var reveals = $$('.reveal');
+  if ('IntersectionObserver' in window && !reduce){
+    var io = new IntersectionObserver(function(entries){
+      var batch = entries.filter(function(e){ return e.isIntersecting; });
+      batch.forEach(function(e, n){
+        if (!e.target.style.getPropertyValue('--i')) e.target.style.setProperty('--i', Math.min(n, 8));
+        e.target.classList.add('in'); io.unobserve(e.target);
+      });
+    }, { rootMargin:'0px 0px -8% 0px', threshold:0.08 });
+    reveals.forEach(function(el){ io.observe(el); });
+    // clear stagger delay after reveal so later hover/state transitions aren't delayed
+    reveals.forEach(function(el){ el.addEventListener('transitionend', function h(ev){ if (ev.propertyName === 'opacity'){ el.style.transitionDelay = '0s'; el.removeEventListener('transitionend', h); } }); });
+  } else {
+    reveals.forEach(function(el){ el.classList.add('in'); });
+  }
+
+  /* ---------- Sliding indicator helper ---------- */
+  function slideTo(indicator, el, container){
+    var cr = container.getBoundingClientRect(), r = el.getBoundingClientRect();
+    var x = r.left - cr.left + container.scrollLeft;
+    indicator.style.transform = 'translateX(' + x + 'px)'; indicator.style.width = r.width + 'px';
+    indicator.style.opacity = 1;
+  }
+
+  /* ---------- Tabs + scrollspy ---------- */
+  var tabsEl = $('#tabs'), ind = $('#tab-indicator'), tabs = $$('.tab'), activeTab = null;
+  function setTab(id){
+    var t = tabs.filter(function(x){ return x.getAttribute('data-target') === id; })[0];
+    if (!t || t === activeTab) return;
+    activeTab = t;
+    tabs.forEach(function(x){ x.setAttribute('aria-current', x === t ? 'true' : 'false'); });
+    slideTo(ind, t, tabsEl);
+    var tl = t.offsetLeft, tr = tl + t.offsetWidth;
+    if (tl < tabsEl.scrollLeft || tr > tabsEl.scrollLeft + tabsEl.clientWidth) tabsEl.scrollTo({ left: tl - 16, behavior: reduce ? 'auto' : 'smooth' });
+  }
+  tabs.forEach(function(t){
+    t.addEventListener('click', function(){
+      var target = document.getElementById(t.getAttribute('data-target'));
+      if (target) target.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block:'start' });
+      setTab(t.getAttribute('data-target'));
+    });
+  });
+  var sections = ['now','gear','phase-1','phase-2','phase-3'].map(function(id){ return document.getElementById(id); });
+  var ticking = false;
+  function onScroll(){
+    if (ticking) return; ticking = true;
+    requestAnimationFrame(function(){
+      ticking = false;
+      $('#topbar').classList.toggle('scrolled', window.scrollY > 8);
+      var line = window.innerHeight * 0.35, cur = sections[0].id;
+      sections.forEach(function(s){ if (s.getBoundingClientRect().top <= line) cur = s.id; });
+      setTab(cur);
+    });
+  }
+  window.addEventListener('scroll', onScroll, { passive:true });
+  window.addEventListener('resize', function(){ if (activeTab) slideTo(ind, activeTab, tabsEl); slideTo(pill, activeFilter, filtersEl); });
+  onScroll();
+
+  /* ---------- Equipment filter (FLIP) ---------- */
+  var filtersEl = $('#filters'), pill = $('#filter-pill'), filters = $$('.filter'), gear = $$('.gear');
+  var activeFilter = filters[0];
+  requestAnimationFrame(function(){ slideTo(pill, activeFilter, filtersEl); });
+  filters.forEach(function(f){
+    f.addEventListener('click', function(){
+      if (f === activeFilter) return;
+      activeFilter = f;
+      filters.forEach(function(x){ x.setAttribute('aria-pressed', x === f ? 'true' : 'false'); });
+      slideTo(pill, f, filtersEl);
+      var key = f.getAttribute('data-f');
+      var first = new Map(); gear.forEach(function(g){ if (!g.hidden) first.set(g, g.getBoundingClientRect()); });
+      gear.forEach(function(g){ g.hidden = !(key === 'all' || g.getAttribute('data-status') === key); });
+      gear.forEach(function(g){
+        if (g.hidden) return;
+        var last = g.getBoundingClientRect(), f0 = first.get(g);
+        if (reduce){ return; }
+        if (f0){
+          var dx = f0.left - last.left, dy = f0.top - last.top;
+          if (dx || dy) g.animate([{ transform:'translate(' + dx + 'px,' + dy + 'px)' }, { transform:'none' }], { duration:420, easing:'cubic-bezier(0.23,1,0.32,1)' });
+        } else {
+          g.animate([{ opacity:0, transform:'scale(.96)' }, { opacity:1, transform:'none' }], { duration:280, easing:'cubic-bezier(0.23,1,0.32,1)' });
+        }
+      });
+    });
+  });
+
+  /* ---------- Diagram: node info + wake simulation ---------- */
+  var info = {
+    tof1:{ t:'ToF · presence', d:'VL53L8 facing outward. Sees someone approach and flips the N6 from idle to alert. It never triggers a response on its own. Stage 3.' },
+    n6:  { t:'N6 board · the ears', d:'NUCLEO-N657X0-Q. Runs wake-word detection on its NPU only while in alert, then sends "WAKE" over USB serial. Stages 4–5.' },
+    mac: { t:'MacBook · the brain', d:'Your existing axiom.py. Listens, sends the request to the Claude API, speaks the reply, and sends claw commands to the Uno. Stage 7.' },
+    uno: { t:'Uno · the hands', d:'ELEGOO Uno R3 over its own USB serial link. Receives a grab command, checks the grip sensor, drives the servos, and reports back. Stage 6.' },
+    servo:{ t:'Servos', d:'SG90s driving the claw. Same PWM pattern as your Phase 1 servo sweep.' },
+    tof2:{ t:'ToF · grip check', d:'Second sensor at the claw. The claw only closes if something is actually within reach.' },
+    amp: { t:'Amp board · PAM8403', d:'Turns the MacBook\'s line-level audio into enough power to drive the salvaged Echo speaker. Stage 2.' },
+    spk: { t:'Speaker · the mouth', d:'The driver salvaged from the 3rd-gen Echo. Axiom\'s voice comes out here. Stage 1.' },
+    pwr: { t:'USB power', d:'5V supply for the amp board only. It carries no data.' }
+  };
+  var steps = [
+    { s:'idle',  n:['tof1'],               w:[],            c:'Nobody around. The ToF sensor scans while the N6 stays in low-power idle.' },
+    { s:'alert', n:['tof1','n6'],          w:['w1'],        c:'Someone walks up. The ToF reports presence over I2C, and the N6 switches to alert and starts listening.' },
+    { s:'awake', n:['n6','mac'],           w:['w2'],        c:'"Axiom" is heard. The N6 sends WAKE over USB serial and the MacBook starts its listen-and-respond flow.' },
+    { s:'awake', n:['mac'],                w:[],            c:'The MacBook sends the request to the Claude API and gets back a reply plus any physical action.' },
+    { s:'awake', n:['mac','uno','tof2','servo'], w:['w3','w6','w5'], c:'"Grab it." The command goes to the Uno, the grip sensor confirms an object, and the servos close the claw.' },
+    { s:'awake', n:['mac','amp','spk','pwr'],    w:['w4','w7'],      c:'The reply plays through the PAM8403 into the salvaged Echo speaker.' },
+    { s:'idle',  n:[],                     w:[],            c:'You walk away. The ToF sees no one and the system drops back to idle.' }
+  ];
+  var ds = $('.diagram-scroll'); ds.scrollLeft = (ds.scrollWidth - ds.clientWidth) / 2; // center on narrow screens
+  var nodes = $$('#nodes .node'), wireGroups = $$('#wires [data-w]'), labels = $$('.wire-label[data-for]');
+  var stateEls = $$('.state'), capStep = $('#cap-step'), capTxt = $('#cap-txt'), dotsEl = $('#dots');
+  steps.forEach(function(){ dotsEl.appendChild(document.createElement('i')); });
+  var dots = $$('i', dotsEl);
+
+  function setCaption(step, txt){
+    capStep.textContent = step;
+    if (reduce){ capTxt.textContent = txt; return; }
+    capTxt.classList.add('swap');
+    setTimeout(function(){ capTxt.textContent = txt; capTxt.classList.remove('swap'); }, 160);
+  }
+  function light(ns, ws){
+    nodes.forEach(function(n){ n.classList.toggle('lit', ns.indexOf(n.getAttribute('data-n')) > -1); });
+    wireGroups.forEach(function(g){ var f = $('.flow', g); if (f) f.classList.toggle('live', ws.indexOf(g.getAttribute('data-w')) > -1); });
+    labels.forEach(function(l){ l.classList.toggle('live', ws.indexOf(l.getAttribute('data-for')) > -1); });
+  }
+  function setState(s){
+    stateEls.forEach(function(el){
+      var on = el.getAttribute('data-s') === s;
+      el.classList.toggle('on', on); el.classList.toggle('alert', on && s === 'alert');
+    });
+  }
+  function clearSel(){ nodes.forEach(function(n){ n.classList.remove('sel'); }); }
+
+  var runBtn = $('#run-btn'), timer = null, idx = -1;
+  function stopSim(){
+    clearTimeout(timer); timer = null; idx = -1;
+    runBtn.classList.remove('running'); $('span', runBtn).textContent = 'Simulate a wake';
+    dots.forEach(function(d){ d.classList.remove('on'); });
+  }
+  function nextStep(){
+    idx++;
+    if (idx >= steps.length){ stopSim(); light([], []); setState('idle'); setCaption('DONE', 'That\'s the full loop. Presence alone never triggers a response; only the wake word does.'); return; }
+    var st = steps[idx];
+    light(st.n, st.w); setState(st.s);
+    setCaption((idx + 1) + '/' + steps.length, st.c);
+    dots.forEach(function(d, i){ d.classList.toggle('on', i === idx); });
+    timer = setTimeout(nextStep, 2400);
+  }
+  runBtn.addEventListener('click', function(){
+    if (timer){ stopSim(); light([], []); setState('idle'); setCaption('TAP', 'Simulation stopped. Tap any part to see its job.'); return; }
+    clearSel();
+    runBtn.classList.add('running'); $('span', runBtn).textContent = 'Stop';
+    nextStep();
+  });
+
+  function selectNode(n){
+    if (timer) stopSim();
+    var key = n.getAttribute('data-n'), d = info[key];
+    clearSel(); n.classList.add('sel');
+    // light the node plus any wires touching it
+    var touching = { tof1:['w1'], n6:['w1','w2'], mac:['w2','w3','w4'], uno:['w3','w5','w6'], servo:['w5'], tof2:['w6'], amp:['w4','w7'], spk:['w7'], pwr:[] }[key] || [];
+    light([key], touching);
+    setCaption('PART', d.t + '. ' + d.d);
+  }
+  nodes.forEach(function(n){
+    n.addEventListener('click', function(){ selectNode(n); });
+    n.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); selectNode(n); } });
+  });
+
+  /* ---------- Hold to reset ---------- */
+  var hold = $('#hold-reset'), holdTimer = null;
+  function startHold(e){
+    if (e.type === 'keydown' && e.key !== 'Enter' && e.key !== ' ') return;
+    if (holdTimer) return;
+    e.preventDefault();
+    hold.classList.add('holding');
+    holdTimer = setTimeout(function(){
+      holdTimer = null; hold.classList.remove('holding');
+      state = {}; save(STORAGE_KEY, state);
+      boxes.forEach(function(b){ b.checked = false; b.closest('.item').classList.remove('done'); });
+      update(false); toast('Progress reset');
+    }, 1400);
+  }
+  function endHold(){ clearTimeout(holdTimer); holdTimer = null; hold.classList.remove('holding'); }
+  hold.addEventListener('pointerdown', startHold);
+  hold.addEventListener('keydown', startHold);
+  ['pointerup','pointerleave','pointercancel','keyup','blur'].forEach(function(ev){ hold.addEventListener(ev, endHold); });
+
+  /* ---------- Toast ---------- */
+  var toastEl = $('#toast'), toastTimer = null;
+  function toast(msg){
+    $('#toast-txt').textContent = msg;
+    toastEl.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ toastEl.classList.remove('show'); }, 2800);
+  }
+})();
+</script>
+</body>
+</html>
