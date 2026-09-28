@@ -419,6 +419,7 @@ footer{margin-top:64px;padding-top:22px;border-top:1px solid var(--border);displ
     </div>
     <nav class="tabs" id="tabs" aria-label="Sections">
       <span class="tab-indicator" id="tab-indicator"></span>
+      <button class="tab" data-target="log">Log</button>
       <button class="tab" data-target="start">Start</button>
       <button class="tab" data-target="now">Plan</button>
       <button class="tab" data-target="gear">Gear</button>
@@ -438,7 +439,7 @@ footer{margin-top:64px;padding-top:22px;border-top:1px solid var(--border);displ
   <section class="hero">
     <p class="eyebrow"><span class="live-dot"></span>Open build · follow along</p>
     <h1 aria-label="Axiom Build Roadmap"><span class="w" style="--i:0">Axiom</span> <span class="w" style="--i:1">Build</span> <span class="w accent" style="--i:2">Roadmap</span></h1>
-    <p class="sub reveal" style="--i:3">A step-by-step roadmap for building Axiom: a presence-aware AI voice assistant with a robotic claw. I'm building it in public. Follow the same steps, check items off as you go, and your progress saves in your own browser.</p>
+    <p class="sub reveal" style="--i:3">A step-by-step roadmap for building Axiom: a presence-aware AI voice assistant with an expressive, desk-sized robotic arm. I'm building it in public. Follow the same steps, check items off as you go, and your progress saves in your own browser.</p>
     <div class="cta-row reveal" style="--i:3">
       <a class="cta primary" href="#start">Start here<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 2l4 4-4 4"/></svg></a>
       <a class="cta" href="https://github.com/RobertMartinez19/AxiomBuildRoadmap" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>View on GitHub</a>
@@ -451,12 +452,33 @@ footer{margin-top:64px;padding-top:22px;border-top:1px solid var(--border);displ
     </div>
   </section>
 
+  <!-- BUILD LOG -->
+  <section class="section" id="log">
+    <div class="reveal">
+      <p class="phase-kicker"><span class="phase-num"><span class="n">◷</span></span>Build log · updated Sep 27, 2026</p>
+      <h2>Where my build is at</h2>
+      <p class="desc">My own progress, separate from your checkboxes. Nothing is marked done until it actually runs.</p>
+    </div>
+    <div class="subs reveal">
+      <div class="table-scroll"><table class="mini-table">
+        <tr><th>Piece</th><th>Status</th><th>Notes</th></tr>
+        <tr><td>Software brain</td><td>✅ Running</td><td>Python on a MacBook: wake word (openWakeWord, placeholder "Hey Jarvis" model until a custom "Axiom" model is trained), two-minute conversation mode, interruptible replies, ElevenLabs voice, long-term memory, screen vision, web search, and a floating holographic UI that pulses with the voice.</td></tr>
+        <tr><td>ST kits</td><td>📦 Received, not yet powered</td><td>P-NUCLEO-53L8A1, SATEL-VL53L8, P-NUCLEO-IHM03, NUCLEO-N657X0-Q.</td></tr>
+        <tr><td>Phase 1 · Arduino</td><td>⏳ Next</td><td>ELEGOO Uno, starter kit, and 4× SG90 on hand.</td></tr>
+        <tr><td>Phase 2 · ToF bring-up</td><td>⏳ Next</td><td>First target: ST's evaluation demo showing the live 8×8 depth map.</td></tr>
+        <tr><td>Arm design</td><td>🤝 Starting</td><td>Partnering with a mechanical-engineer friend on geometry, CAD, and 3D printing. I own the electronics, firmware, and AI.</td></tr>
+        <tr><td>Arm build, N6 wake word, presence gate</td><td>⏳ Planned</td><td>Phase 3.</td></tr>
+        <tr><td>Budget</td><td>$0 target</td><td>Built only from parts already on hand.</td></tr>
+      </table></div>
+    </div>
+  </section>
+
   <!-- START HERE -->
   <section class="section" id="start">
     <div class="reveal">
       <p class="phase-kicker"><span class="phase-num"><span class="n">★</span></span>Start here</p>
       <h2>How to follow along</h2>
-      <p class="desc">You don't need the exact parts I'm using. The architecture is the point: a sensor notices you, a small chip listens for a wake word, a computer does the thinking, and a microcontroller moves the claw. Swap parts freely.</p>
+      <p class="desc">You don't need the exact parts I'm using. The architecture is the point: a sensor notices you, a small chip listens for a wake word, a computer does the thinking, and microcontrollers move the arm. Swap parts freely.</p>
     </div>
     <div class="how">
       <div class="how-card reveal"><span class="how-n">1</span><h4>Mark your gear</h4><p>Tap everything you already own in the Gear list. It shows what's left to buy and where to find it.</p></div>
@@ -468,9 +490,11 @@ footer{margin-top:64px;padding-top:22px;border-top:1px solid var(--border);displ
       <div class="table-scroll"><table class="mini-table">
         <tr><th>Role</th><th>In this build</th><th>Also works</th></tr>
         <tr><td>Presence sensor</td><td>VL53L8 multizone ToF</td><td>A cheaper single-zone ToF breakout (e.g. VL53L1X)</td></tr>
-        <tr><td>Wake word ("ears")</td><td>STM32N6 Nucleo</td><td>Run the wake word on your computer instead (e.g. openWakeWord) and skip Stage 4</td></tr>
+        <tr><td>Wake word ("ears")</td><td>STM32N6 Nucleo</td><td>Run the wake word on your computer instead (e.g. openWakeWord, which this build uses until Stage 4 is done) and skip Stage 4</td></tr>
         <tr><td>Brain</td><td>Computer + Claude API</td><td>Any Mac, PC, or Linux box that runs Python</td></tr>
-        <tr><td>Hands</td><td>Arduino Uno + SG90 servos</td><td>Any Arduino-compatible board with PWM pins</td></tr>
+        <tr><td>Arm joints</td><td>Arduino Uno + 4× SG90 (shoulder, elbow, wrist, gripper)</td><td>Any Arduino-compatible board with PWM pins; 3 servos if you drop the wrist</td></tr>
+        <tr><td>Base rotation</td><td>P-NUCLEO-IHM03 gimbal motor (FOC)</td><td>A fifth hobby servo on the Uno</td></tr>
+        <tr><td>Body</td><td>3D-printed shells, matte black</td><td>Any printed or laser-cut frame; makerspaces and print services work if you don’t own a printer</td></tr>
         <tr><td>Mouth</td><td>Salvaged Echo driver + PAM8403</td><td>Any small 4–8Ω speaker on the same amp</td></tr>
       </table></div>
     </div>
@@ -500,6 +524,7 @@ footer{margin-top:64px;padding-top:22px;border-top:1px solid var(--border);displ
                 <li>Record a few seconds of audio, transcribe it, send the text to Claude, and print the reply. Get this working as plain text first.</li>
                 <li>Add text-to-speech so the reply is spoken out loud.</li>
                 <li>Wrap it in a loop that starts on a keypress. In Stage 5 the keypress gets replaced by the "WAKE" message from the N6 board.</li>
+                <li>Optional extras that make it feel alive: a computer-side wake word (openWakeWord), a conversation mode that keeps listening for a couple of minutes, and a memory file that carries over between sessions.</li>
               </ol>
             </div></div></div>
           </div>
@@ -564,15 +589,17 @@ footer{margin-top:64px;padding-top:22px;border-top:1px solid var(--border);displ
     <div class="equip" id="equip">
       <div class="gear reveal" data-g="uno"><button class="have" aria-pressed="false"><span class="dot"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span><span class="name">Arduino Uno R3 (or clone)</span></button><span class="tag">P1</span></div>
       <div class="gear reveal" data-g="kit"><button class="have" aria-pressed="false"><span class="dot"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span><span class="name">Starter kit: breadboard, LEDs, buzzer, potentiometer, jumpers</span></button><span class="tag">P1</span></div>
-      <div class="gear reveal" data-g="servo"><button class="have" aria-pressed="false"><span class="dot"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span><span class="name">SG90 micro servos (2+)</span></button><span class="tag">P1</span></div>
+      <div class="gear reveal" data-g="servo"><button class="have" aria-pressed="false"><span class="dot"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span><span class="name">SG90 micro servos (4 for the arm)</span></button><span class="tag">P1</span></div>
       <div class="gear reveal" data-g="meter"><button class="have" aria-pressed="false"><span class="dot"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span><span class="name">Multimeter</span></button><span class="tag">P1</span></div>
       <div class="gear reveal" data-g="tof"><button class="have" aria-pressed="false"><span class="dot"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span><span class="name">P-NUCLEO-53L8A1 (ToF sensor kit)</span></button><span class="tag">P2</span><a class="find" href="https://www.digikey.com/en/products/result?keywords=P-NUCLEO-53L8A1" target="_blank" rel="noopener">Find</a></div>
       <div class="gear reveal" data-g="satel"><button class="have" aria-pressed="false"><span class="dot"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span><span class="name">SATEL-VL53L8 (second sensor, optional)</span></button><span class="tag">P2</span><a class="find" href="https://www.digikey.com/en/products/result?keywords=SATEL-VL53L8" target="_blank" rel="noopener">Find</a></div>
       <div class="gear reveal" data-g="n6"><button class="have" aria-pressed="false"><span class="dot"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span><span class="name">NUCLEO-N657X0-Q (STM32N6 AI board)</span></button><span class="tag">P3</span><a class="find" href="https://www.digikey.com/en/products/result?keywords=NUCLEO-N657X0-Q" target="_blank" rel="noopener">Find</a></div>
-      <div class="gear reveal" data-g="ihm"><button class="have" aria-pressed="false"><span class="dot"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span><span class="name">P-NUCLEO-IHM03 (motor control, optional)</span></button><span class="tag">P3</span><a class="find" href="https://www.digikey.com/en/products/result?keywords=P-NUCLEO-IHM03" target="_blank" rel="noopener">Find</a></div>
+      <div class="gear reveal" data-g="ihm"><button class="have" aria-pressed="false"><span class="dot"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span><span class="name">P-NUCLEO-IHM03 (base rotation motor + FOC driver)</span></button><span class="tag">P3</span><a class="find" href="https://www.digikey.com/en/products/result?keywords=P-NUCLEO-IHM03" target="_blank" rel="noopener">Find</a></div>
       <div class="gear reveal" data-g="amp"><button class="have" aria-pressed="false"><span class="dot"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span><span class="name">PAM8403 mini amp board</span></button><span class="tag">P3</span></div>
       <div class="gear reveal" data-g="spk"><button class="have" aria-pressed="false"><span class="dot"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span><span class="name">Small speaker (Echo driver or any 4–8Ω)</span></button><span class="tag">P3</span></div>
-      <div class="gear reveal" data-g="claw"><button class="have" aria-pressed="false"><span class="dot"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span><span class="name">Claw mechanism + base (3D print or kit)</span></button><span class="tag">P3</span></div>
+      <div class="gear reveal" data-g="claw"><button class="have" aria-pressed="false"><span class="dot"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span><span class="name">3D-printed arm shells + base plate</span></button><span class="tag">P3</span></div>
+      <div class="gear reveal" data-g="printer"><button class="have" aria-pressed="false"><span class="dot"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span><span class="name">3D printer access (yours, a friend’s, or a makerspace)</span></button><span class="tag">P3</span></div>
+      <div class="gear reveal" data-g="usb5v"><button class="have" aria-pressed="false"><span class="dot"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span><span class="name">5V USB charger or power bank (servo power)</span></button><span class="tag">P3</span></div>
       <div class="gear reveal" data-g="mount"><button class="have" aria-pressed="false"><span class="dot"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span><span class="name">Phone tripod / mount for filming</span></button><span class="tag">Opt</span></div>
     </div>
   </section>
@@ -615,7 +642,7 @@ footer{margin-top:64px;padding-top:22px;border-top:1px solid var(--border);displ
           <label class="check"><input type="checkbox" data-id="p1-servo" aria-label="Mark complete"><span class="box"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span></label>
           <div class="item-body">
             <h4 class="item-title">Servo sweep: PWM / motor control</h4>
-            <p class="item-note">The most important of the three. This carries straight into the ST motor control kit and the claw's actual movement.</p>
+            <p class="item-note">The most important of the three. This carries straight into the ST motor control kit and the arm's actual movement.</p>
             <a class="video-btn" href="https://www.youtube.com/watch?v=tCYVFxigR3o" target="_blank" rel="noopener"><svg viewBox="0 0 12 12" fill="currentColor"><path d="M3 1.5v9l7.5-4.5z"/></svg>Master Servo SG90 with Arduino in 5 Minutes</a>
           </div>
         </div>
@@ -749,8 +776,8 @@ footer{margin-top:64px;padding-top:22px;border-top:1px solid var(--border);displ
     <div class="reveal">
       <p class="phase-kicker"><span class="phase-num"><span class="n">03</span><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span>Phase 3 · Capstone</p>
       <h2>Code Axiom <span class="badge green">Full build</span></h2>
-      <p class="desc">Table-mounted claw, speaking through a gutted 3rd-gen Echo, woken by "Axiom," powered by the Claude API. Layered wake design: the ToF sensor detects when you approach and puts the system into a low-power "alert" state, but only the spoken word "Axiom" actually triggers a response. The N6 board is the ears, the ToF sensor is the sense of presence, the Uno + servos are the hands, your computer is the brain, and the Echo speaker is the mouth.</p>
-      <div class="phase-meter"><span class="pm-count">0/10</span><div class="bar"><i></i></div></div>
+      <p class="desc">A desk-sized expressive arm (matte black shells, round joint drums, a parallel gripper), speaking through a gutted 3rd-gen Echo, woken by "Axiom," powered by the Claude API. It turns to face you when you walk up and gestures while it talks. Layered wake design: the ToF sensor detects when you approach and puts the system into a low-power "alert" state, but only the spoken word "Axiom" actually triggers a response. The N6 board is the ears, the ToF sensor is the sense of presence, the Uno + four servos are the arm, the IHM03 gimbal motor turns the base, your computer is the brain, and the Echo speaker is the mouth.</p>
+      <div class="phase-meter"><span class="pm-count">0/11</span><div class="bar"><i></i></div></div>
     </div>
 
     <figure class="diagram-card reveal" style="margin-left:0;margin-right:0">
@@ -767,7 +794,7 @@ footer{margin-top:64px;padding-top:22px;border-top:1px solid var(--border);displ
         </button>
       </div>
 
-      <div class="diagram-scroll"><svg class="diagram" id="diagram" viewBox="0 0 900 640" role="img" aria-label="Wiring map: a ToF presence sensor connects to the N6 board, which connects by USB to the computer. The computer connects by USB to the Uno and by audio cable to the amp board. The Uno connects to a second ToF sensor and the claw servos. The amp board connects to the salvaged speaker and its own USB power.">
+      <div class="diagram-scroll"><svg class="diagram" id="diagram" viewBox="0 0 900 640" role="img" aria-label="Wiring map: a ToF presence sensor connects to the N6 board, which connects by USB to the computer. The computer connects by USB to the Uno and by audio cable to the amp board. The computer also connects by USB to the IHM03 base driver, which spins the base motor. The Uno connects to a second ToF sensor and the four arm servos. The amp board connects to the salvaged speaker and its own USB power.">
         <defs>
           <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--border-strong)"/></marker>
         </defs>
@@ -779,6 +806,8 @@ footer{margin-top:64px;padding-top:22px;border-top:1px solid var(--border);displ
           <g data-w="w5"><path class="wire" d="M165 508 L95 568" marker-end="url(#arrow)"/><path class="flow" d="M165 508 L95 568"/></g>
           <g data-w="w6"><path class="wire" d="M235 508 L270 568" marker-end="url(#arrow)"/><path class="flow" d="M235 508 L270 568"/></g>
           <g data-w="w7"><path class="wire" d="M700 508 L700 568" marker-end="url(#arrow)"/><path class="flow" d="M700 508 L700 568"/></g>
+          <g data-w="w9"><path class="wire" d="M450 374 L450 454" marker-end="url(#arrow)"/><path class="flow" d="M450 374 L450 454"/></g>
+          <g data-w="w10"><path class="wire" d="M450 504 L450 568" marker-end="url(#arrow)"/><path class="flow" d="M450 504 L450 568"/></g>
           <g data-w="w8"><path class="wire" d="M798 486 L784 486" stroke-dasharray="4 4" marker-end="url(#arrow)"/></g>
         </g>
         <g>
@@ -790,6 +819,8 @@ footer{margin-top:64px;padding-top:22px;border-top:1px solid var(--border);displ
           <text class="wire-label" data-for="w6" x="262" y="534">4 wires (I2C)</text>
           <text class="wire-label" data-for="w7" x="710" y="542">2 wires</text>
           <text class="wire-label" x="806" y="522" font-size="10">power only</text>
+          <text class="wire-label" data-for="w9" x="460" y="424">USB · angle</text>
+          <text class="wire-label" data-for="w10" x="460" y="540">3 phases</text>
         </g>
         <g id="nodes" font-size="13">
           <g class="node" data-n="tof1" tabindex="0" role="button" aria-label="ToF presence sensor">
@@ -809,21 +840,32 @@ footer{margin-top:64px;padding-top:22px;border-top:1px solid var(--border);displ
             <text x="450" y="342" text-anchor="middle" font-weight="600">Computer</text>
             <text class="role" x="450" y="360" text-anchor="middle">the brain</text>
           </g>
-          <g class="node" data-n="uno" tabindex="0" role="button" aria-label="Uno, the hands">
+          <g class="node" data-n="uno" tabindex="0" role="button" aria-label="Uno, the arm">
             <rect class="halo" x="108" y="442" width="184" height="74" rx="16"/>
             <rect class="body" x="120" y="454" width="160" height="50" rx="10"/>
             <text x="200" y="475" text-anchor="middle" font-weight="600">Uno</text>
-            <text class="role" x="200" y="492" text-anchor="middle">the hands</text>
+            <text class="role" x="200" y="492" text-anchor="middle">the arm</text>
           </g>
-          <g class="node" data-n="servo" tabindex="0" role="button" aria-label="Claw servos">
+          <g class="node" data-n="servo" tabindex="0" role="button" aria-label="Four arm servos">
             <rect class="halo" x="8" y="556" width="144" height="64" rx="14"/>
             <rect class="body" x="20" y="568" width="120" height="40" rx="8"/>
-            <text x="80" y="593" text-anchor="middle" font-size="12">Servos</text>
+            <text x="80" y="593" text-anchor="middle" font-size="12">4 arm servos</text>
           </g>
           <g class="node" data-n="tof2" tabindex="0" role="button" aria-label="ToF grip check sensor">
             <rect class="halo" x="178" y="556" width="174" height="64" rx="14"/>
             <rect class="body" x="190" y="568" width="150" height="40" rx="8"/>
             <text x="265" y="593" text-anchor="middle" font-size="12">ToF · grip check</text>
+          </g>
+          <g class="node" data-n="ihm" tabindex="0" role="button" aria-label="IHM03 base driver">
+            <rect class="halo" x="358" y="442" width="184" height="74" rx="16"/>
+            <rect class="body" x="370" y="454" width="160" height="50" rx="10"/>
+            <text x="450" y="475" text-anchor="middle" font-weight="600">Base driver</text>
+            <text class="role" x="450" y="492" text-anchor="middle">IHM03 · FOC</text>
+          </g>
+          <g class="node" data-n="motor" tabindex="0" role="button" aria-label="Base gimbal motor">
+            <rect class="halo" x="368" y="556" width="164" height="64" rx="14"/>
+            <rect class="body" x="380" y="568" width="140" height="40" rx="8"/>
+            <text x="450" y="593" text-anchor="middle" font-size="12">Base motor</text>
           </g>
           <g class="node" data-n="amp" tabindex="0" role="button" aria-label="PAM8403 amp board">
             <rect class="halo" x="608" y="442" width="184" height="74" rx="16"/>
@@ -846,7 +888,7 @@ footer{margin-top:64px;padding-top:22px;border-top:1px solid var(--border);displ
 
       <div class="caption"><span class="step" id="cap-step">TAP</span><span class="txt" id="cap-txt">Tap any part to see its job, or run the simulation to watch a wake travel through the system.</span></div>
       <div class="dots" id="dots" aria-hidden="true"></div>
-      <figcaption>Everything connects to the computer, the N6 board, or the Uno. Nothing connects sensor-to-sensor or servo-to-speaker directly.</figcaption>
+      <figcaption>Everything connects to the computer, the N6 board, the Uno, or the base driver. Nothing connects sensor-to-sensor or servo-to-speaker directly.</figcaption>
     </figure>
 
     <div class="track">
@@ -951,16 +993,38 @@ footer{margin-top:64px;padding-top:22px;border-top:1px solid var(--border);displ
         <div class="item-head">
           <label class="check"><input type="checkbox" data-id="p3-hands" aria-label="Mark complete"><span class="box"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span></label>
           <div class="item-body">
-            <h4 class="item-title">Stage 6: Build the claw and wire the "hands"</h4>
-            <p class="item-note">This is where your Phase 1 servo work and the ToF sensor from Phase 2 both come back directly.</p>
+            <h4 class="item-title">Stage 6: Build the arm and wire the servos</h4>
+            <p class="item-note">Desk-sized and light: about 20–25 cm of reach. SG90s are weak, so the design has to be light and short. This is where your Phase 1 servo work and the Phase 2 ToF sensor come back directly.</p>
             <button class="steps-toggle" aria-expanded="false">Steps <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 2l4 4-4 4"/></svg></button>
             <div class="steps"><div class="steps-inner"><div class="steps-content">
               <ol>
-                <li>Assemble or 3D-print a small claw/gripper mechanism sized for 1–2 SG90 servos (many free claw designs exist for exactly this servo).</li>
-                <li>Wire the servos to the Uno the same way you did in Phase 1.</li>
-                <li>Mount one ToF sensor near the claw's grip point, wired to the Uno over I2C.</li>
-                <li>Write a simple Uno sketch: wait for a serial command, check the ToF reading, only close the servo if something is within a set distance, then report back "done" or "nothing there" over serial.</li>
+                <li>Joint map: base = IHM03 gimbal motor (Stage 7); shoulder, elbow, wrist, and gripper = one SG90 each. Short on servos? Drop the wrist first.</li>
+                <li>Design the shells (in this build, with a mechanical-engineer partner): matte black, round drums that hide each servo, long curved links, an offset elbow, and a parallel gripper. Keep links light, and add a spring or rubber-band counterbalance at the shoulder, which carries the most load.</li>
+                <li>Print one joint first, a servo inside its drum, and move it from the computer before printing the rest.</li>
+                <li>Wire the servos to the Uno the same way you did in Phase 1, but power them from a 5V USB charger or power bank on the breadboard, not the Uno's 5V pin. Four servos moving at once draw more than the Uno can supply. Tie the grounds together.</li>
+                <li>Mount the second ToF sensor (SATEL-VL53L8) at the gripper, wired to the Uno over I2C.</li>
+                <li>Write a simple Uno sketch: wait for a serial command, check the ToF reading, only close the gripper if something is within a set distance, then report back "done" or "nothing there" over serial.</li>
                 <li>Connect the Uno to your computer over its own USB cable (a second serial connection, separate from the N6 board's).</li>
+              </ol>
+            </div></div></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="item reveal" data-track>
+        <div class="item-head">
+          <label class="check"><input type="checkbox" data-id="p3-base" aria-label="Mark complete"><span class="box"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span></label>
+          <div class="item-body">
+            <h4 class="item-title">Stage 7: Turn the base to face you</h4>
+            <p class="item-note">The P-NUCLEO-IHM03's gimbal motor turns the whole arm. Driving it with field-oriented control (FOC) is one of the most common things ST motor-control customers do, so it's a worthwhile skill to show.</p>
+            <button class="steps-toggle" aria-expanded="false">Steps <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 2l4 4-4 4"/></svg></button>
+            <div class="steps"><div class="steps-inner"><div class="steps-content">
+              <ol>
+                <li>Check what power the kit expects before plugging anything in. Clamp the motor down for first spin-up.</li>
+                <li>Install ST's motor control tools and get the kit's own example spinning the gimbal motor smoothly before changing anything.</li>
+                <li>Switch from speed control to position control, so it can hold a target angle.</li>
+                <li>Have the computer send a target angle over USB serial and confirm the base goes there and holds.</li>
+                <li>Use the presence sensor's 8×8 zones to work out whether you're left, center, or right, and turn the base toward you. Ease in and out so it glides instead of snapping.</li>
               </ol>
             </div></div></div>
           </div>
@@ -971,13 +1035,14 @@ footer{margin-top:64px;padding-top:22px;border-top:1px solid var(--border);displ
         <div class="item-head">
           <label class="check"><input type="checkbox" data-id="p3-integrate" aria-label="Mark complete"><span class="box"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span></label>
           <div class="item-body">
-            <h4 class="item-title">Stage 7: Tie it all together</h4>
+            <h4 class="item-title">Stage 8: Tie it all together</h4>
             <button class="steps-toggle" aria-expanded="false">Steps <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 2l4 4-4 4"/></svg></button>
             <div class="steps"><div class="steps-inner"><div class="steps-content">
               <ol>
-                <li>In your voice app, add logic so that when Claude's response implies a physical action ("grab it," "pick that up"), it sends the matching command over the Uno's serial connection.</li>
+                <li>Have Claude tag each reply with a mood (e.g. [curious], [excited]) and map each tag to a short, hand-designed gesture. Add small movements while it speaks and a slow "breathing" idle, so it never sits frozen.</li>
+                <li>When Claude's response implies a physical action ("grab it," "pick that up"), send the matching command over the Uno's serial connection.</li>
                 <li>Route Axiom's spoken response through the PAM8403 amp/Echo speaker instead of your computer's built-in speakers.</li>
-                <li>Run a full loop: say "Axiom," ask it to grab something, confirm the claw only closes when the ToF sensor sees an object, and confirm the response plays through the salvaged speaker.</li>
+                <li>Run a full loop: say "Axiom," ask it to grab something, confirm the base turns to you, the arm gestures while it talks, the gripper only closes when the ToF sensor sees an object, and confirm the response plays through the salvaged speaker.</li>
               </ol>
             </div></div></div>
           </div>
@@ -988,8 +1053,8 @@ footer{margin-top:64px;padding-top:22px;border-top:1px solid var(--border);displ
         <div class="item-head">
           <label class="check"><input type="checkbox" data-id="p3-mount" aria-label="Mark complete"><span class="box"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span></label>
           <div class="item-body">
-            <h4 class="item-title">Stage 8: Mount everything on the table base</h4>
-            <p class="item-note">Make it look like one finished object, not a pile of wired boards.</p>
+            <h4 class="item-title">Stage 9: Mount everything on the base</h4>
+            <p class="item-note">Make it look like one finished object, not a pile of wired boards: a black base plate with the boards hidden underneath and the Echo speaker built in.</p>
           </div>
         </div>
       </article>
@@ -998,8 +1063,8 @@ footer{margin-top:64px;padding-top:22px;border-top:1px solid var(--border);displ
         <div class="item-head">
           <label class="check"><input type="checkbox" data-id="p3-document" aria-label="Mark complete"><span class="box"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span></label>
           <div class="item-body">
-            <h4 class="item-title">Stage 9: Document the build and the thinking behind it</h4>
-            <p class="item-note">This is the actual portfolio centerpiece. Write up the decisions (why five separate parts instead of one board doing everything, what broke, what you'd do differently), not just a parts list.</p>
+            <h4 class="item-title">Stage 10: Document the build and the thinking behind it</h4>
+            <p class="item-note">This is the actual portfolio centerpiece. Write up the decisions (why separate boards for presence, wake word, arm, and base instead of one board doing everything, what broke, what you'd do differently), not just a parts list.</p>
           </div>
         </div>
       </article>
@@ -1008,7 +1073,7 @@ footer{margin-top:64px;padding-top:22px;border-top:1px solid var(--border);displ
         <div class="item-head">
           <label class="check"><input type="checkbox" data-id="p3-video" aria-label="Mark complete"><span class="box"><svg viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7"/></svg></span></label>
           <div class="item-body">
-            <h4 class="item-title">Stage 10: Film the final demo</h4>
+            <h4 class="item-title">Stage 11: Film the final demo</h4>
             <p class="item-note">Same shot-list structure as the ToF video: intro, live demo, what's happening under the hood, and a wrap-up on what you'd tell someone evaluating this approach.</p>
           </div>
         </div>
@@ -1239,12 +1304,14 @@ footer{margin-top:64px;padding-top:22px;border-top:1px solid var(--border);displ
 
   /* ---------- Diagram: node info + wake simulation ---------- */
   var info = {
-    tof1:{ t:'ToF · presence', d:'VL53L8 facing outward. Sees someone approach and flips the N6 from idle to alert. It never triggers a response on its own. Stage 3.' },
+    tof1:{ t:'ToF · presence', d:'VL53L8 facing outward. Sees someone approach and flips the N6 from idle to alert, and its 8×8 zones tell which side you are on so the base can turn to face you. It never triggers a response on its own. Stage 3.' },
     n6:  { t:'N6 board · the ears', d:'NUCLEO-N657X0-Q. Runs wake-word detection on its NPU only while in alert, then sends "WAKE" over USB serial. Stages 4–5.' },
-    mac: { t:'Computer · the brain', d:'Your Python voice app from the Plan section. Listens, sends the request to the Claude API, speaks the reply, and sends claw commands to the Uno. Stage 7.' },
-    uno: { t:'Uno · the hands', d:'ELEGOO Uno R3 over its own USB serial link. Receives a grab command, checks the grip sensor, drives the servos, and reports back. Stage 6.' },
-    servo:{ t:'Servos', d:'SG90s driving the claw. Same PWM pattern as your Phase 1 servo sweep.' },
-    tof2:{ t:'ToF · grip check', d:'Second sensor at the claw. The claw only closes if something is actually within reach.' },
+    mac: { t:'Computer · the brain', d:'Your Python voice app from the Plan section. Listens, sends the request to the Claude API, speaks the reply, and sends gesture commands to the Uno and turn commands to the base driver. Stage 8.' },
+    uno: { t:'Uno · the arm', d:'ELEGOO Uno R3 over its own USB serial link. Receives gesture and grab commands, checks the grip sensor, drives the four servos, and reports back. Stage 6.' },
+    servo:{ t:'4 arm servos', d:'SG90s at the shoulder, elbow, wrist, and gripper, hidden inside printed joint drums. Same PWM pattern as your Phase 1 servo sweep, powered from a 5V USB supply rather than the Uno.' },
+    ihm: { t:'Base driver · IHM03', d:'P-NUCLEO-IHM03 running field-oriented control (FOC) from ST’s motor control tools. Takes a target angle from the computer. Stage 7.' },
+    motor:{ t:'Base motor', d:'The gimbal motor from the IHM03 kit. Built for slow, smooth, quiet motion, so the whole arm turns to face you without the jerk of a hobby servo.' },
+    tof2:{ t:'ToF · grip check', d:'SATEL-VL53L8 at the gripper. The gripper only closes if something is actually within reach.' },
     amp: { t:'Amp board · PAM8403', d:'Turns the computer\'s line-level audio into enough power to drive the salvaged Echo speaker. Stage 2.' },
     spk: { t:'Speaker · the mouth', d:'The driver salvaged from the 3rd-gen Echo. Axiom\'s voice comes out here. Stage 1.' },
     pwr: { t:'USB power', d:'5V supply for the amp board only. It carries no data.' }
@@ -1252,9 +1319,11 @@ footer{margin-top:64px;padding-top:22px;border-top:1px solid var(--border);displ
   var steps = [
     { s:'idle',  n:['tof1'],               w:[],            c:'Nobody around. The ToF sensor scans while the N6 stays in low-power idle.' },
     { s:'alert', n:['tof1','n6'],          w:['w1'],        c:'Someone walks up. The ToF reports presence over I2C, and the N6 switches to alert and starts listening.' },
+    { s:'alert', n:['n6','mac','ihm','motor'], w:['w2','w9','w10'], c:'The N6 passes along which side you are on. The computer sends an angle to the base driver, and the arm smoothly turns to face you.' },
     { s:'awake', n:['n6','mac'],           w:['w2'],        c:'"Axiom" is heard. The N6 sends WAKE over USB serial and the computer starts its listen-and-respond flow.' },
     { s:'awake', n:['mac'],                w:[],            c:'The computer sends the request to the Claude API and gets back a reply plus any physical action.' },
-    { s:'awake', n:['mac','uno','tof2','servo'], w:['w3','w6','w5'], c:'"Grab it." The command goes to the Uno, the grip sensor confirms an object, and the servos close the claw.' },
+    { s:'awake', n:['mac','uno','servo'],  w:['w3','w5'],   c:'While Axiom talks, the computer sends gesture commands to the Uno: a nod, a tilt, the gripper opening and closing like a mouth.' },
+    { s:'awake', n:['mac','uno','tof2','servo'], w:['w3','w6','w5'], c:'"Grab it." The command goes to the Uno, the grip sensor confirms an object, and the gripper closes.' },
     { s:'awake', n:['mac','amp','spk','pwr'],    w:['w4','w7'],      c:'The reply plays through the PAM8403 into the salvaged Echo speaker.' },
     { s:'idle',  n:[],                     w:[],            c:'You walk away. The ToF sees no one and the system drops back to idle.' }
   ];
@@ -1310,7 +1379,7 @@ footer{margin-top:64px;padding-top:22px;border-top:1px solid var(--border);displ
     var key = n.getAttribute('data-n'), d = info[key];
     clearSel(); n.classList.add('sel');
     // light the node plus any wires touching it
-    var touching = { tof1:['w1'], n6:['w1','w2'], mac:['w2','w3','w4'], uno:['w3','w5','w6'], servo:['w5'], tof2:['w6'], amp:['w4','w7'], spk:['w7'], pwr:[] }[key] || [];
+    var touching = { tof1:['w1'], n6:['w1','w2'], mac:['w2','w3','w4','w9'], ihm:['w9','w10'], motor:['w10'], uno:['w3','w5','w6'], servo:['w5'], tof2:['w6'], amp:['w4','w7'], spk:['w7'], pwr:[] }[key] || [];
     light([key], touching);
     setCaption('PART', d.t + '. ' + d.d);
   }
